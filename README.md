@@ -7,9 +7,11 @@ Using this tool you can see how long you've been compiling your project during t
 
 ```
 ./gradlew totalBuildTime
+```
 
 or
 
+```
 ./gradlew todayBuildTime
 ```
 
