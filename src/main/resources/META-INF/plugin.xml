@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>com.github.pedrovgs.kurono</id>
+    <name>kurono</name>
+    <version>0.0.1</version>
+    <vendor email="pedrovicente.gomez@gmail.com" url="https://github.com/pedrovgs">Pedro Vicente Gómez Sánchez</vendor>
+
+    <description><![CDATA[
+        Measures and collects your project build times. Let's measure how long developers are compiling software.
+    ]]></description>
+
+    <change-notes><![CDATA[
+        0.0.1: Initial version.<br>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="162"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+</idea-plugin>
