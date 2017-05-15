@@ -1,0 +1,31 @@
+group = 'com.github.pedrovgs'
+version = '0.0.1'
+
+apply plugin: 'scala'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.maiflai.scalatest'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'org.scala-lang:scala-library:2.12.1'
+    compile project(':kuronometer-core')
+    testCompile 'org.scalatest:scalatest_2.12:3.0.3'
+    testRuntime 'org.pegdown:pegdown:1.4.2'
+    testCompile 'org.scalamock:scalamock-scalatest-support_2.12:3.5.0'
+    testCompile gradleTestKit()
+}
+
+apply plugin: 'maven'
+
+install {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}

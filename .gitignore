@@ -1,27 +1,31 @@
-# SBT
-dist/*
+# IntelliJ
+out/
+.idea/
 target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-.history
-.cache
-.lib/
+*.iml
+local.properties
 
-# IntelliJ
+### Java ###
+*.class
+classes/
 
-# User-specific stuff:
-.idea
+# Package Files #
+*.jar
 
-## File-based project format:
-*.iws
+### Gradle ###
+.gradle
+build/
 
-## Plugin-specific files:
+### Specific ###
+*.zip
 
-# IntelliJ
-/out/
+# Ignore Gradle GUI config
+gradle-app.setting
 
-# mpeltonen/sbt-idea plugin
-.idea_modules/
-com_crashlytics_export_strings.xml
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+### Plugin local repo ###
+
+repo/
+

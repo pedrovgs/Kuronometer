@@ -1,0 +1,39 @@
+group = 'com.github.pedrovgs'
+version = '0.0.1'
+
+apply plugin: 'scala'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.maiflai.scalatest'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.1'
+    compile 'org.typelevel:cats_2.12:0.9.0'
+    compile 'net.sf.supercsv:super-csv:2.4.0'
+    compile 'org.scalaj:scalaj-http_2.12:2.3.0'
+    compile 'net.liftweb:lift-json_2.12:3.1.0-M2'
+    compile 'net.liftweb:lift-json-ext_2.12:3.1.0-M2'
+    testCompile 'org.scalatest:scalatest_2.12:3.0.3'
+    testRuntime 'org.pegdown:pegdown:1.4.2'
+    testCompile 'com.github.tomakehurst:wiremock:2.6.0'
+    testCompile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'org.scalacheck:scalacheck_2.12:1.13.4'
+    testCompile 'org.scalamock:scalamock-scalatest-support_2.12:3.5.0'
+}
+
+test {
+    maxParallelForks = 1
+}
+
+apply plugin: 'maven'
+
+install {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}

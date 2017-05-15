@@ -1,0 +1,38 @@
+{
+  "project" : {
+    "info" : {
+      "name" : "kuronometer",
+      "description" : "Let's measure how long developers around the world are compiling software."
+    },
+    "version" : {
+      "group" : "com.github.pedrovgs",
+      "version" : "0.0.1"
+    }
+  },
+  "platform" : "Java",
+  "buildTool" : "Gradle",
+  "buildStagesExecution" : {
+    "stages" : [ {
+      "info" : {
+        "name" : "test",
+        "description" : "Runs the unit tests.",
+        "group" : "verification"
+      },
+      "execution" : {
+        "executionTimeInNanoseconds" : 6086138,
+        "timestamp" : 1493679320207,
+        "skipped" : false
+      }
+    }, {
+      "info" : {
+        "name" : "compileJava",
+        "description" : "Compiles main Java source."
+      },
+      "execution" : {
+        "executionTimeInNanoseconds" : 4010896,
+        "timestamp" : 1493679320162,
+        "skipped" : true
+      }
+    } ]
+  }
+}

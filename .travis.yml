@@ -1,0 +1,22 @@
+language: android
+jdk:
+  - oraclejdk8
+
+android:
+  components:
+    - tools
+    - build-tools-25.0.2
+    - android-25
+    - extra-android-support
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+script:
+  - ./gradlew build install
+  - cd kuronometer-consumer
+  - ./gradlew build test
+  - ./gradlew totalBuildTime
+  - cd ..
+  - cd kuronometer-android-consumer
+  - ./gradlew build test
+  - ./gradlew totalBuildTime

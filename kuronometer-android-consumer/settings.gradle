@@ -1,0 +1,1 @@
+include ':app', ':kurono-android-lib-module'
