@@ -10,9 +10,12 @@ import com.github.pedrovgs.kuronometer.free.interpreter.Interpreters
 import com.github.pedrovgs.kuronometer.free.interpreter.formatter.DurationFormatter.NanosecondsFormat.format
 import com.github.pedrovgs.kuronometer.free.interpreter.formatter.SummaryBuildStageExecutionFormatter
 
-class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[KuronometerProgram], interpreters: Interpreters) {
-
+object Kuronometer {
   private val kuronometerHeader = "== Kuronometer =="
+}
+
+class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[KuronometerProgram], interpreters: Interpreters) {
+  import Kuronometer._
 
   def reportBuildFinished(buildExecution: BuildExecution, config: Config): KuronometerResult[BuildExecution] = {
     val filteredBuildExecution = filterBuildExecutionData(buildExecution, config)
