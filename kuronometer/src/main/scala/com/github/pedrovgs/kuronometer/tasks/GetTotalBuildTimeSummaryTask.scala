@@ -1,6 +1,8 @@
 package com.github.pedrovgs.kuronometer.tasks
 
+import com.github.pedrovgs.kuronometer.Kuronometer
 import org.gradle.api.tasks.TaskAction
+import com.github.pedrovgs.kuronometer.implicits._
 
 object GetTotalBuildTimeSummaryTask {
   val name = "totalBuildTime"
@@ -12,6 +14,6 @@ class GetTotalBuildTimeSummaryTask() extends KuronometerTask {
 
   @TaskAction
   def totalBuildTime(): Unit = {
-    kuronometer.getTotalBuildExecutionSummary
+    Kuronometer.getTotalBuildExecutionSummary
   }
 }

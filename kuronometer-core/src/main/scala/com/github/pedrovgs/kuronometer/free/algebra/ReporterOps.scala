@@ -26,4 +26,6 @@ class ReporterOps[F[_]](implicit I: Inject[ReporterOp, F]) {
 
 }
 
-
+object ReporterOps {
+  implicit def R[F[_]](implicit I: Inject[ReporterOp, F]): ReporterOps[F] = new ReporterOps[F]
+}

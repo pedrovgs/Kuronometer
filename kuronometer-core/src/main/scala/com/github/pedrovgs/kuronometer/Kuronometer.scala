@@ -3,7 +3,8 @@ package com.github.pedrovgs.kuronometer
 import cats.free.Free
 import com.github.pedrovgs.kuronometer.KuronometerResults.{ConnectionError, KuronometerResult}
 import com.github.pedrovgs.kuronometer.app.KuronometerProgram
-import com.github.pedrovgs.kuronometer.free.algebra.{ReporterOps, ViewOps}
+import com.github.pedrovgs.kuronometer.free.algebra.ReporterOps
+import com.github.pedrovgs.kuronometer.free.algebra.ViewOps
 import com.github.pedrovgs.kuronometer.free.domain.View.Message
 import com.github.pedrovgs.kuronometer.free.domain._
 import com.github.pedrovgs.kuronometer.free.interpreter.Interpreters
@@ -11,13 +12,11 @@ import com.github.pedrovgs.kuronometer.free.interpreter.formatter.DurationFormat
 import com.github.pedrovgs.kuronometer.free.interpreter.formatter.SummaryBuildStageExecutionFormatter
 
 object Kuronometer {
+
   private val kuronometerHeader = "== Kuronometer =="
-}
 
-class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[KuronometerProgram], interpreters: Interpreters) {
-  import Kuronometer._
-
-  def reportBuildFinished(buildExecution: BuildExecution, config: Config): KuronometerResult[BuildExecution] = {
+  def reportBuildFinished(buildExecution: BuildExecution, config: Config)
+                         (implicit interpreters: Interpreters): KuronometerResult[BuildExecution] = {
     val filteredBuildExecution = filterBuildExecutionData(buildExecution, config)
     val program = for {
       result <- reportBuildExecution(filteredBuildExecution, config)
@@ -26,7 +25,8 @@ class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[Kurono
     program.foldMap(interpreters.kuronometerInterpreter)
   }
 
-  def getTotalBuildExecutionSummary: KuronometerResult[SummaryBuildStagesExecution] = {
+  def getTotalBuildExecutionSummary(implicit R: ReporterOps[KuronometerProgram],
+                                    interpreters: Interpreters): KuronometerResult[SummaryBuildStagesExecution] = {
     val program = for {
       totalSummary <- R.getTotalBuildExecution
       _ <- showBuildExecutionSummary(totalSummary)
@@ -34,7 +34,8 @@ class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[Kurono
     program.foldMap(interpreters.kuronometerInterpreter)
   }
 
-  def getTodayBuildExecutionSummary: KuronometerResult[SummaryBuildStagesExecution] = {
+  def getTodayBuildExecutionSummary(implicit R: ReporterOps[KuronometerProgram],
+                                    interpreters: Interpreters): KuronometerResult[SummaryBuildStagesExecution] = {
     val program = for {
       todaySummary <- R.getTodayBuildExecution
       _ <- showBuildExecutionSummary(todaySummary)
@@ -42,7 +43,8 @@ class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[Kurono
     program.foldMap(interpreters.kuronometerInterpreter)
   }
 
-  private def reportBuildExecution(buildExecution: BuildExecution, config: Config): Free[KuronometerProgram, KuronometerResult[BuildExecution]] = {
+  private def reportBuildExecution(buildExecution: BuildExecution, config: Config)
+                                  (implicit R: ReporterOps[KuronometerProgram]): Free[KuronometerProgram, KuronometerResult[BuildExecution]] = {
     for {
       result <- if (config.reportDataRemotely) {
         R.reportBuildExecution(buildExecution, RemoteReport)
@@ -53,7 +55,8 @@ class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[Kurono
     } yield result
   }
 
-  private def showReportResult(result: KuronometerResult[BuildExecution], config: Config): Free[KuronometerProgram, Message] = {
+  private def showReportResult(result: KuronometerResult[BuildExecution], config: Config)
+                              (implicit V: ViewOps[KuronometerProgram]): Free[KuronometerProgram, Message] = {
     if (!config.verbose) {
       V.showMessage("")
     } else {
@@ -74,7 +77,8 @@ class Kuronometer(implicit R: ReporterOps[KuronometerProgram], V: ViewOps[Kurono
     }
   }
 
-  private def showBuildExecutionSummary(result: KuronometerResult[SummaryBuildStagesExecution]): Free[KuronometerProgram, Message] = {
+  private def showBuildExecutionSummary(result: KuronometerResult[SummaryBuildStagesExecution])
+                                       (implicit V: ViewOps[KuronometerProgram]): Free[KuronometerProgram, Message] = {
     result match {
       case Right(summary) => for {
         _ <- V.showMessage(kuronometerHeader)

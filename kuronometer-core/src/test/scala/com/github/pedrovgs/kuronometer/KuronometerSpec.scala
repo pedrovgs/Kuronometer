@@ -16,7 +16,6 @@ import org.scalatest.prop.PropertyChecks
 class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with MockFactory {
 
   private val apiClientConfig = KuronometerApiClientConfig()
-  private val kuronometer = new Kuronometer()
 
   "Kuronometer" should "point to production" in {
     apiClientConfig.scheme shouldBe "https"
@@ -29,7 +28,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report _).expects(build).returning(Left(error))
       (csvReporter.report _).expects(build).returning(Right(build))
 
-      kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe Right(build)
+      Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe Right(build)
     }
   }
 
@@ -38,7 +37,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report _).expects(build).returning(Right(build))
       (csvReporter.report _).expects(build).returning(Left(error))
 
-      kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe (Left(error))
+      Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe (Left(error))
     }
   }
 
@@ -47,7 +46,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report _).expects(*).returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
-      kuronometer.reportBuildFinished(build, config).isRight shouldBe true
+      Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
     }
   }
 
@@ -56,7 +55,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report _).expects(*).never().returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
-      kuronometer.reportBuildFinished(build, config).isRight shouldBe true
+      Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
     }
   }
 
@@ -66,7 +65,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report _).expects(anonymousBuild).returning(Right(anonymousBuild))
       (csvReporter.report _).expects(anonymousBuild).returning(Right(anonymousBuild))
 
-      kuronometer.reportBuildFinished(build, ConfigMother.anyAnonymousConfig) shouldBe Right(anonymousBuild)
+      Kuronometer.reportBuildFinished(build, ConfigMother.anyAnonymousConfig) shouldBe Right(anonymousBuild)
     }
   }
 
@@ -74,7 +73,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (summary: SummaryBuildStagesExecution) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Right(summary))
 
-      kuronometer.getTotalBuildExecutionSummary shouldBe Right(summary)
+      Kuronometer.getTotalBuildExecutionSummary shouldBe Right(summary)
     }
   }
 
@@ -82,7 +81,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (error: KuronometerError) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Left(error))
 
-      kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
+      Kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
     }
   }
 
@@ -94,7 +93,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (clock.todayMidnightTimestamp _).expects().returning(maxTimestamp)
       (csvReporter.getBuildExecutionStagesSinceTimestamp _).expects(*).returning(Right(summary))
 
-      kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
+      Kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
     }
   }
 
@@ -102,7 +101,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (error: KuronometerError) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Left(error))
 
-      kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
+      Kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
     }
   }
 
@@ -111,7 +110,7 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (clock.todayMidnightTimestamp _).expects().returning(timestamp)
       (csvReporter.getBuildExecutionStagesSinceTimestamp _).expects(timestamp).returning(Right(summary))
 
-      kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
+      Kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
     }
   }
 }

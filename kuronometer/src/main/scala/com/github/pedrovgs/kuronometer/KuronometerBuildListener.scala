@@ -7,8 +7,9 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.{Project, Task}
 import org.gradle.{BuildListener, BuildResult}
+import com.github.pedrovgs.kuronometer.implicits._
 
-case class KuronometerBuildListener(project: Project)(implicit kuronometer: Kuronometer) extends BuildListener with TaskExecutionListener {
+case class KuronometerBuildListener(project: Project) extends BuildListener with TaskExecutionListener {
 
   private var buildStages = List[BuildStage]()
   private var taskStartTimestamp: Long = 0
@@ -43,7 +44,7 @@ case class KuronometerBuildListener(project: Project)(implicit kuronometer: Kuro
     val kuronometerProject = mapGradleProjectToKuronometerProject(project)
     val buildStagesExecution = BuildStagesExecution(buildStages)
     val buildExecution = BuildExecution(Some(kuronometerProject), config.platform, BuildTool.Gradle, buildStagesExecution)
-    kuronometer.reportBuildFinished(buildExecution, config)
+    Kuronometer.reportBuildFinished(buildExecution, config)
   }
 
   private def mapGradleProjectToKuronometerProject(project: Project): com.github.pedrovgs.kuronometer.free.domain.Project = {
