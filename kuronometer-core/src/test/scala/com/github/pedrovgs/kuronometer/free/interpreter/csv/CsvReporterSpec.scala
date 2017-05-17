@@ -13,7 +13,7 @@ class CsvReporterSpec extends FlatSpec with Matchers with PropertyChecks with Be
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reporter.clear()
+    reporter.clear
   }
 
   "CsvReporter" should "return an empty summary build stages execution if there are no previous builds persisted" in {
@@ -23,7 +23,7 @@ class CsvReporterSpec extends FlatSpec with Matchers with PropertyChecks with Be
 
   it should "return as many stages as previously persisted getting the total build execution stages" in {
     forAll { (buildExecution: BuildExecution) =>
-      reporter.clear()
+      reporter.clear
       reporter.report(buildExecution)
       val reportedStages = buildExecution.buildStagesExecution.stages
       val stages = reporter.getTotalBuildExecutionStages.map(summary => summary.buildStages)
@@ -33,7 +33,7 @@ class CsvReporterSpec extends FlatSpec with Matchers with PropertyChecks with Be
 
   it should "filter build stage executions by execution timestamp getting build execution stages by timestamp" in {
     forAll(buildExecution(Gen.choose(0L, 1000L))) { (buildExecution: BuildExecution) =>
-      reporter.clear()
+      reporter.clear
       reporter.report(buildExecution)
       val timestamp = 500
       val filteredBuildExecutions = reporter.getBuildExecutionStagesSinceTimestamp(timestamp)

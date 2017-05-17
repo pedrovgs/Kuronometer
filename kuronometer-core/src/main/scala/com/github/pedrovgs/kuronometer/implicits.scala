@@ -8,8 +8,6 @@ object implicits {
 
   implicit def clock = new Clock()
 
-  implicit def csvReporterConfig = new CsvReporterConfig()
-
   implicit def csvReporter = new CsvReporter()
 
   implicit def apiClientConfig = KuronometerApiClientConfig()

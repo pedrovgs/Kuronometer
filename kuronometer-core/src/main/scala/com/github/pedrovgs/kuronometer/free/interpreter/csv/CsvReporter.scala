@@ -10,7 +10,7 @@ import org.supercsv.prefs.CsvPreference
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class CsvReporter(implicit csvReporterConfig: CsvReporterConfig) {
+class CsvReporter {
 
   def report(buildExecution: BuildExecution): KuronometerResult[BuildExecution] = {
     val stages = buildExecution.buildStagesExecution.stages
@@ -29,7 +29,7 @@ class CsvReporter(implicit csvReporterConfig: CsvReporterConfig) {
 
       val csvBuildStages = mutable.ListBuffer[CsvBuildStageExecution]()
 
-      val csvFile = new File(csvReporterConfig.executionTasksCsvFile)
+      val csvFile = new File(CsvReporterConfig.executionTasksCsvFile)
       val beanReader = new CsvBeanReader(new FileReader(csvFile), CsvPreference.STANDARD_PREFERENCE)
       val headers = beanReader.getHeader(true)
       try {
@@ -54,9 +54,9 @@ class CsvReporter(implicit csvReporterConfig: CsvReporterConfig) {
     SummaryBuildStagesExecution(stages)
   }
 
-  def clear(): Unit = {
+  def clear: Unit = {
     if (existsReportFile) {
-      val csvFile = new File(csvReporterConfig.executionTasksCsvFile)
+      val csvFile = new File(CsvReporterConfig.executionTasksCsvFile)
       csvFile.delete()
     }
   }
@@ -65,12 +65,12 @@ class CsvReporter(implicit csvReporterConfig: CsvReporterConfig) {
     val csvStages: Seq[CsvBuildStageExecution] = mapBuildStages(stages)
     var beanWriter: ICsvBeanWriter = null
     try {
-      val reportsFolder = new File(csvReporterConfig.reportsFolder)
+      val reportsFolder = new File(CsvReporterConfig.reportsFolder)
       if (!reportsFolder.exists()) {
         reportsFolder.mkdirs()
       }
       val csvFileExists = existsReportFile
-      val writer = new FileWriter(csvReporterConfig.executionTasksCsvFile, csvFileExists)
+      val writer = new FileWriter(CsvReporterConfig.executionTasksCsvFile, csvFileExists)
       beanWriter = new CsvBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE)
       if (!csvFileExists && csvStages.nonEmpty) {
         beanWriter.writeHeader(CsvReporterConfig.headers: _*)
@@ -93,7 +93,7 @@ class CsvReporter(implicit csvReporterConfig: CsvReporterConfig) {
     csvStages
   }
 
-  private def existsReportFile = new File(csvReporterConfig.executionTasksCsvFile).exists
+  private def existsReportFile = new File(CsvReporterConfig.executionTasksCsvFile).exists
 
-  private def reportFileIsEmpty = new File(csvReporterConfig.executionTasksCsvFile).length() == 0
+  private def reportFileIsEmpty = new File(CsvReporterConfig.executionTasksCsvFile).length() == 0
 }
