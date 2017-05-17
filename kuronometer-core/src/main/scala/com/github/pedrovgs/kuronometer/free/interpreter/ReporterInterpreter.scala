@@ -5,6 +5,7 @@ import com.github.pedrovgs.kuronometer.free.algebra.{GetTodayBuildExecution, Get
 import com.github.pedrovgs.kuronometer.free.domain.{LocalReport, RemoteReport}
 import com.github.pedrovgs.kuronometer.free.interpreter.api.KuronometerApiClient
 import com.github.pedrovgs.kuronometer.free.interpreter.csv.CsvReporter
+import com.github.pedrovgs.kuronometer.implicits._
 
 class ReporterInterpreter(implicit csvReporter: CsvReporter, apiClient: KuronometerApiClient, clock: Clock)
   extends (ReporterOp ~> Id) {

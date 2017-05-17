@@ -8,16 +8,18 @@ import net.liftweb.json.ext.EnumNameSerializer
 
 import scalaj.http.Http
 
-class KuronometerApiClient(implicit apiClientConfig: KuronometerApiClientConfig) {
+class KuronometerApiClient {
 
   private implicit val formats = DefaultFormats + new EnumNameSerializer(Platform)
 
-  def report(buildExecution: BuildExecution): KuronometerResult[BuildExecution] = {
+  def report(buildExecution: BuildExecution)
+            (implicit apiClientConfig: KuronometerApiClientConfig): KuronometerResult[BuildExecution] = {
     val json = write(buildExecution)
     sendPostRequest(buildExecution, json, "/buildExecution")
   }
 
-  private def sendPostRequest(buildExecution: BuildExecution, body: String, path: String): KuronometerResult[BuildExecution] = {
+  private def sendPostRequest(buildExecution: BuildExecution, body: String, path: String)
+                             (implicit apiClientConfig: KuronometerApiClientConfig): KuronometerResult[BuildExecution] = {
     try {
       val response = Http(composeUrl(path))
         .headers(KuronometerApiClientConfig.headers)
@@ -35,5 +37,5 @@ class KuronometerApiClient(implicit apiClientConfig: KuronometerApiClientConfig)
     }
   }
 
-  private def composeUrl(path: String): String = apiClientConfig.scheme + "://" + apiClientConfig.host + ":" + apiClientConfig.port + path
+  private def composeUrl(path: String)(implicit apiClientConfig: KuronometerApiClientConfig): String = apiClientConfig.scheme + "://" + apiClientConfig.host + ":" + apiClientConfig.port + path
 }

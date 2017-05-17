@@ -1,7 +1,7 @@
 package com.github.pedrovgs.kuronometer
 
 import com.github.pedrovgs.kuronometer.free.interpreter._
-import com.github.pedrovgs.kuronometer.free.interpreter.api.KuronometerApiClient
+import com.github.pedrovgs.kuronometer.free.interpreter.api.{KuronometerApiClient, KuronometerApiClientConfig}
 import com.github.pedrovgs.kuronometer.free.interpreter.csv.CsvReporter
 import org.scalamock.scalatest.MockFactory
 

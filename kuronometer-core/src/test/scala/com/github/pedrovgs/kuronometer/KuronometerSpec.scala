@@ -5,7 +5,7 @@ import com.github.pedrovgs.kuronometer.KuronometerSpecImplicits._
 import com.github.pedrovgs.kuronometer.free.domain.{BuildExecution, Config, SummaryBuildStagesExecution}
 import com.github.pedrovgs.kuronometer.free.interpreter.api.KuronometerApiClientConfig
 import com.github.pedrovgs.kuronometer.generators.BuildExecutionGenerators._
-import com.github.pedrovgs.kuronometer.generators.ConfigGenerators.config
+import com.github.pedrovgs.kuronometer.generators.ConfigGenerators._
 import com.github.pedrovgs.kuronometer.generators.KuronometerErrorGenerators._
 import com.github.pedrovgs.kuronometer.mothers.ConfigMother
 import org.scalacheck.Gen
@@ -15,17 +15,18 @@ import org.scalatest.prop.PropertyChecks
 
 class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with MockFactory {
 
-  private val apiClientConfig = KuronometerApiClientConfig()
+  val apiConfig = KuronometerApiClientConfig()
+  implicit def apiClientConfig = apiConfig
 
   "Kuronometer" should "point to production" in {
-    apiClientConfig.scheme shouldBe "https"
-    apiClientConfig.host shouldBe "kuronometer.io"
-    apiClientConfig.port shouldBe 80
+    apiConfig.scheme shouldBe "https"
+    apiConfig.host shouldBe "kuronometer.io"
+    apiConfig.port shouldBe 80
   }
 
   it should "returns the build report as a success even when the remote reporter fails due to any error" in {
     forAll { (build: BuildExecution, error: KuronometerError) =>
-      (apiClient.report _).expects(build).returning(Left(error))
+      (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(build, *).returning(Left(error))
       (csvReporter.report _).expects(build).returning(Right(build))
 
       Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe Right(build)
@@ -34,35 +35,35 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
 
   it should "returns the build report as an error if the local reporter fails due to any error" in {
     forAll { (build: BuildExecution, error: KuronometerError) =>
-      (apiClient.report _).expects(build).returning(Right(build))
+      (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(build, *).returning(Right(build))
       (csvReporter.report _).expects(build).returning(Left(error))
 
       Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe (Left(error))
     }
   }
 
-  it should "always report two the local and remote reporters if the config reports data remotely" in {
+  it should "always report two the local and remote reporters if the apiClientConfig reports data remotely" in {
     forAll(buildExecution(), config(Gen.const(true))) { (build: BuildExecution, config: Config) =>
-      (apiClient.report _).expects(*).returning(Right(build))
+      (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(*, *).returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
       Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
     }
   }
 
-  it should "just report to the local reporter if the config does not report data remotely" in {
+  it should "just report to the local reporter if the apiClientConfig does not report data remotely" in {
     forAll(buildExecution(), config(Gen.const(false))) { (build: BuildExecution, config: Config) =>
-      (apiClient.report _).expects(*).never().returning(Right(build))
+      (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(*, *).never().returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
       Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
     }
   }
 
-  it should "anonymize the build execution if the config does not report project info" in {
+  it should "anonymize the build execution if the apiClientConfig does not report project info" in {
     forAll { (build: BuildExecution) =>
       val anonymousBuild = build.copy(project = None)
-      (apiClient.report _).expects(anonymousBuild).returning(Right(anonymousBuild))
+      (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(anonymousBuild, *).returning(Right(anonymousBuild))
       (csvReporter.report _).expects(anonymousBuild).returning(Right(anonymousBuild))
 
       Kuronometer.reportBuildFinished(build, ConfigMother.anyAnonymousConfig) shouldBe Right(anonymousBuild)
