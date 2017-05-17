@@ -1,7 +1,8 @@
 package com.github.pedrovgs.kuronometer
 
 
-import cats._
+import cats.Eval
+import cats.implicits._
 import cats.free.Free
 import com.github.pedrovgs.kuronometer.KuronometerResults.{ConnectionError, KuronometerResult}
 import com.github.pedrovgs.kuronometer.free.algebra.{ReporterOps, ViewOps}
@@ -39,14 +40,13 @@ object Kuronometer {
 
   private def reportBuildExecution[F[_]](buildExecution: BuildExecution, config: Config)
                                         (implicit R: ReporterOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
-    for {
-      result <- if (config.reportDataRemotely) {
-        R.reportBuildExecution(buildExecution, RemoteReport)
-        R.reportBuildExecution(buildExecution, LocalReport)
-      } else {
-        R.reportBuildExecution(buildExecution, LocalReport)
-      }
-    } yield result
+    val remoteReport = R.reportBuildExecution(buildExecution, RemoteReport)
+    val localReport = R.reportBuildExecution(buildExecution, LocalReport)
+    if(config.reportDataRemotely) {
+      remoteReport >> localReport
+    } else {
+      localReport
+    }
   }
 
   private def showReportResult[F[_]](result: KuronometerResult[BuildExecution], config: Config)
