@@ -1,9 +1,10 @@
 package com.github.pedrovgs.kuronometer
 
+
+import cats._
 import cats.free.Free
 import com.github.pedrovgs.kuronometer.KuronometerResults.{ConnectionError, KuronometerResult}
-import com.github.pedrovgs.kuronometer.free.algebra.ReporterOps
-import com.github.pedrovgs.kuronometer.free.algebra.ViewOps
+import com.github.pedrovgs.kuronometer.free.algebra.{ReporterOps, ViewOps}
 import com.github.pedrovgs.kuronometer.free.domain.View.Message
 import com.github.pedrovgs.kuronometer.free.domain._
 import com.github.pedrovgs.kuronometer.free.interpreter.formatter.DurationFormatter.NanosecondsFormat.format
@@ -14,30 +15,30 @@ object Kuronometer {
   private val kuronometerHeader = "== Kuronometer =="
 
   def reportBuildFinished[F[_]](buildExecution: BuildExecution, config: Config)
-                               (implicit R: ReporterOps[F], V: ViewOps[F]) = {
+                               (implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
     val filteredBuildExecution = filterBuildExecutionData(buildExecution, config)
-    for {
-      result <- reportBuildExecution(filteredBuildExecution, config)
-      _ <- showReportResult(result, config)
-    } yield result
+    reportBuildExecution(filteredBuildExecution, config).map { result: KuronometerResult[BuildExecution] =>
+      showReportResult(result, config)
+      result
+    }
   }
 
-  def getTotalBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]) = {
-    for {
-      totalSummary <- R.getTotalBuildExecution
-      _ <- showBuildExecutionSummary(totalSummary)
-    } yield totalSummary
+  def getTotalBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
+    R.getTotalBuildExecution.map { summary: KuronometerResult[SummaryBuildStagesExecution] =>
+      showBuildExecutionSummary(summary)
+      summary
+    }
   }
 
-  def getTodayBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]) = {
-    for {
-      todaySummary <- R.getTodayBuildExecution
-      _ <- showBuildExecutionSummary(todaySummary)
-    } yield todaySummary
+  def getTodayBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
+    R.getTodayBuildExecution.map { summary: KuronometerResult[SummaryBuildStagesExecution] =>
+      showBuildExecutionSummary(summary)
+      summary
+    }
   }
 
   private def reportBuildExecution[F[_]](buildExecution: BuildExecution, config: Config)
-                                  (implicit R: ReporterOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
+                                        (implicit R: ReporterOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
     for {
       result <- if (config.reportDataRemotely) {
         R.reportBuildExecution(buildExecution, RemoteReport)
@@ -49,7 +50,7 @@ object Kuronometer {
   }
 
   private def showReportResult[F[_]](result: KuronometerResult[BuildExecution], config: Config)
-                              (implicit V: ViewOps[F]): Free[F, Message] = {
+                                    (implicit V: ViewOps[F]): Free[F, Message] = {
     if (!config.verbose) {
       V.showMessage("")
     } else {
@@ -71,7 +72,7 @@ object Kuronometer {
   }
 
   private def showBuildExecutionSummary[F[_]](result: KuronometerResult[SummaryBuildStagesExecution])
-                                       (implicit V: ViewOps[F]): Free[F, Message] = {
+                                             (implicit V: ViewOps[F]): Free[F, Message] = {
     result match {
       case Right(summary) => for {
         _ <- V.showMessage(kuronometerHeader)
