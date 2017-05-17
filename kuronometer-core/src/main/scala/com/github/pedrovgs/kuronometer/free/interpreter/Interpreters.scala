@@ -8,4 +8,5 @@ class Interpreters(implicit reporterInterpreter: (ReporterOp ~> Id), viewInterpr
 
   val kuronometerInterpreter: KuronometerProgram ~> Id = reporterInterpreter or viewInterpreter
 
+
 }

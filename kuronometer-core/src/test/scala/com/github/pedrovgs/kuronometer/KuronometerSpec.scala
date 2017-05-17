@@ -2,6 +2,7 @@ package com.github.pedrovgs.kuronometer
 
 import com.github.pedrovgs.kuronometer.KuronometerResults.KuronometerError
 import com.github.pedrovgs.kuronometer.KuronometerSpecImplicits._
+import com.github.pedrovgs.kuronometer.app.KuronometerProgram
 import com.github.pedrovgs.kuronometer.free.domain.{BuildExecution, Config, SummaryBuildStagesExecution}
 import com.github.pedrovgs.kuronometer.free.interpreter.api.KuronometerApiClientConfig
 import com.github.pedrovgs.kuronometer.generators.BuildExecutionGenerators._
@@ -16,7 +17,7 @@ import org.scalatest.prop.PropertyChecks
 class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with MockFactory {
 
   val apiConfig = KuronometerApiClientConfig()
-  implicit def apiClientConfig = apiConfig
+  implicit def apiClientConfig: KuronometerApiClientConfig = apiConfig
 
   "Kuronometer" should "point to production" in {
     apiConfig.scheme shouldBe "https"
@@ -29,7 +30,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(build, *).returning(Left(error))
       (csvReporter.report _).expects(build).returning(Right(build))
 
-      Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe Right(build)
+      val reportedBuild = Kuronometer.reportBuildFinished[KuronometerProgram](build, ConfigMother.anyConfig).foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild shouldBe Right(build)
     }
   }
 
@@ -38,7 +41,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(build, *).returning(Right(build))
       (csvReporter.report _).expects(build).returning(Left(error))
 
-      Kuronometer.reportBuildFinished(build, ConfigMother.anyConfig) shouldBe (Left(error))
+      val reportedBuild = Kuronometer.reportBuildFinished[KuronometerProgram](build, ConfigMother.anyConfig).foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild shouldBe Left(error)
     }
   }
 
@@ -47,7 +52,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(*, *).returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
-      Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
+      val reportedBuild = Kuronometer.reportBuildFinished[KuronometerProgram](build, config).foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild.isRight shouldBe true
     }
   }
 
@@ -56,7 +63,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(*, *).never().returning(Right(build))
       (csvReporter.report _).expects(*).returning(Right(build))
 
-      Kuronometer.reportBuildFinished(build, config).isRight shouldBe true
+      val reportedBuild = Kuronometer.reportBuildFinished[KuronometerProgram](build, config).foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild.isRight shouldBe true
     }
   }
 
@@ -66,7 +75,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (apiClient.report (_: BuildExecution)(_: KuronometerApiClientConfig)).expects(anonymousBuild, *).returning(Right(anonymousBuild))
       (csvReporter.report _).expects(anonymousBuild).returning(Right(anonymousBuild))
 
-      Kuronometer.reportBuildFinished(build, ConfigMother.anyAnonymousConfig) shouldBe Right(anonymousBuild)
+      val reportedBuild = Kuronometer.reportBuildFinished[KuronometerProgram](build, ConfigMother.anyAnonymousConfig).foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild shouldBe Right(anonymousBuild)
     }
   }
 
@@ -74,7 +85,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (summary: SummaryBuildStagesExecution) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Right(summary))
 
-      Kuronometer.getTotalBuildExecutionSummary shouldBe Right(summary)
+      val reportedBuild = Kuronometer.getTotalBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+
+      reportedBuild shouldBe Right(summary)
     }
   }
 
@@ -82,7 +95,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (error: KuronometerError) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Left(error))
 
-      Kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
+      val totalBuildTime = Kuronometer.getTotalBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+
+      totalBuildTime shouldBe Left(error)
     }
   }
 
@@ -94,7 +109,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (clock.todayMidnightTimestamp _).expects().returning(maxTimestamp)
       (csvReporter.getBuildExecutionStagesSinceTimestamp _).expects(*).returning(Right(summary))
 
-      Kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
+      val todayBuildTime = Kuronometer.getTodayBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+
+      todayBuildTime shouldBe Right(summary)
     }
   }
 
@@ -102,7 +119,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
     forAll { (error: KuronometerError) =>
       (csvReporter.getTotalBuildExecutionStages _).expects().returning(Left(error))
 
-      Kuronometer.getTotalBuildExecutionSummary shouldBe Left(error)
+      val totalBuildTime = Kuronometer.getTotalBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+
+      totalBuildTime shouldBe Left(error)
     }
   }
 
@@ -111,7 +130,9 @@ class KuronometerSpec extends FlatSpec with Matchers with PropertyChecks with Mo
       (clock.todayMidnightTimestamp _).expects().returning(timestamp)
       (csvReporter.getBuildExecutionStagesSinceTimestamp _).expects(timestamp).returning(Right(summary))
 
-      Kuronometer.getTodayBuildExecutionSummary shouldBe Right(summary)
+      val todayBuildTime = Kuronometer.getTodayBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+
+      todayBuildTime shouldBe Right(summary)
     }
   }
 }

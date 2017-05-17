@@ -1,15 +1,16 @@
 package com.github.pedrovgs.kuronometer
 
+import com.github.pedrovgs.kuronometer.app.KuronometerProgram
 import com.github.pedrovgs.kuronometer.free.domain._
+import com.github.pedrovgs.kuronometer.free.interpreter.Interpreters
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.{Project, Task}
 import org.gradle.{BuildListener, BuildResult}
-import com.github.pedrovgs.kuronometer.implicits._
 
-case class KuronometerBuildListener(project: Project) extends BuildListener with TaskExecutionListener {
+case class KuronometerBuildListener(project: Project)(implicit interpreters: Interpreters) extends BuildListener with TaskExecutionListener {
 
   private var buildStages = List[BuildStage]()
   private var taskStartTimestamp: Long = 0
@@ -44,7 +45,7 @@ case class KuronometerBuildListener(project: Project) extends BuildListener with
     val kuronometerProject = mapGradleProjectToKuronometerProject(project)
     val buildStagesExecution = BuildStagesExecution(buildStages)
     val buildExecution = BuildExecution(Some(kuronometerProject), config.platform, BuildTool.Gradle, buildStagesExecution)
-    Kuronometer.reportBuildFinished(buildExecution, config)
+    Kuronometer.reportBuildFinished[KuronometerProgram](buildExecution, config).foldMap(interpreters.kuronometerInterpreter)
   }
 
   private def mapGradleProjectToKuronometerProject(project: Project): com.github.pedrovgs.kuronometer.free.domain.Project = {
