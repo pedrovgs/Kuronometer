@@ -11,17 +11,15 @@ final case class ShowError(message: Message) extends ViewOp[Message]
 
 class ViewOps[F[_]](implicit I: Inject[ViewOp, F]) {
 
-  def showMessage[A](message: Message): Free[F, Message] = {
+  def showMessage[A](message: Message): Free[F, Message] =
     Free.inject[ViewOp, F](ShowMessage(message))
-  }
 
-  def showSuccess[A](message: Message): Free[F, Message] = {
+  def showSuccess[A](message: Message): Free[F, Message] =
     Free.inject[ViewOp, F](ShowSuccess(message))
-  }
 
-  def showError[A](message: Message): Free[F, Message] = {
+  def showError[A](message: Message): Free[F, Message] =
     Free.inject[ViewOp, F](ShowError(message))
-  }
+
 }
 
 object ViewOps {

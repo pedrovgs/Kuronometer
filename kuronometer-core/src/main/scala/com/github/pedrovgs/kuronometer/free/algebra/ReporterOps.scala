@@ -12,17 +12,14 @@ final case class GetTodayBuildExecution() extends ReporterOp[KuronometerResult[S
 
 class ReporterOps[F[_]](implicit I: Inject[ReporterOp, F]) {
 
-  def reportBuildExecution[A](buildExecution: BuildExecution, reporter: Report): Free[F, KuronometerResult[BuildExecution]] = {
+  def reportBuildExecution[A](buildExecution: BuildExecution, reporter: Report): Free[F, KuronometerResult[BuildExecution]] =
     Free.inject[ReporterOp, F](ReportBuildExecution(buildExecution, reporter))
-  }
 
-  def getTotalBuildExecution[A]: Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
+  def getTotalBuildExecution[A]: Free[F, KuronometerResult[SummaryBuildStagesExecution]] =
     Free.inject[ReporterOp, F](GetTotalBuildExecution())
-  }
 
-  def getTodayBuildExecution[A]: Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
+  def getTodayBuildExecution[A]: Free[F, KuronometerResult[SummaryBuildStagesExecution]] =
     Free.inject[ReporterOp, F](GetTodayBuildExecution())
-  }
 
 }
 
