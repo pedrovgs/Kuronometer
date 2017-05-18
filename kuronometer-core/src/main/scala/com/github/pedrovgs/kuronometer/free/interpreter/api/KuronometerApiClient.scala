@@ -1,6 +1,6 @@
 package com.github.pedrovgs.kuronometer.free.interpreter.api
 
-import com.github.pedrovgs.kuronometer.KuronometerResults.{ConnectionError, KuronometerResult, UnknownError}
+import com.github.pedrovgs.kuronometer.KuronometerResults.{UnknownError, ConnectionError, KuronometerResult}
 import com.github.pedrovgs.kuronometer.free.domain.{BuildExecution, Platform}
 import net.liftweb.json.DefaultFormats
 import net.liftweb.json.Serialization.write
@@ -20,20 +20,16 @@ class KuronometerApiClient {
 
   private def sendPostRequest(buildExecution: BuildExecution, body: String, path: String)
                              (implicit apiClientConfig: KuronometerApiClientConfig): KuronometerResult[BuildExecution] = {
-    try {
-      val response = Http(composeUrl(path))
-        .headers(KuronometerApiClientConfig.headers)
-        .postData(body)
-        .asString
-      if (response.isSuccess) {
-        Right(buildExecution)
-      } else {
-        Left(UnknownError)
-      }
-    } catch {
-      case _: Throwable => {
-        Left(ConnectionError)
-      }
+    val response = Http(composeUrl(path))
+      .headers(KuronometerApiClientConfig.headers)
+      .postData(body)
+      .asString
+    if (response.isSuccess) {
+      Right(buildExecution)
+    } else if (response.is5xx) {
+      Left(UnknownError)
+    } else {
+      Left(ConnectionError)
     }
   }
 

@@ -12,8 +12,9 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.scala-lang:scala-library:2.12.1'
     compile project(':kuronometer-core')
+    compile 'org.scala-lang:scala-library:2.12.1'
+    compile 'joda-time:joda-time:2.9.9'
     testCompile 'org.scalatest:scalatest_2.12:3.0.3'
     testRuntime 'org.pegdown:pegdown:1.4.2'
     testCompile 'org.scalamock:scalamock-scalatest-support_2.12:3.5.0'
