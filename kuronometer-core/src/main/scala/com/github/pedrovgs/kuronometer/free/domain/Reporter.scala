@@ -1,6 +1,6 @@
 package com.github.pedrovgs.kuronometer.free.domain
 
-sealed trait Report
+sealed abstract class Report extends Product
 case object LocalReport extends Report
 case object RemoteReport extends Report
 
