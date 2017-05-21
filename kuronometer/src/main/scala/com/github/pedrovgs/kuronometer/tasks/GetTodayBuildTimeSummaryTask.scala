@@ -1,10 +1,9 @@
 package com.github.pedrovgs.kuronometer.tasks
 
-import cats.Id
 import com.github.pedrovgs.kuronometer.Kuronometer
 import com.github.pedrovgs.kuronometer.app.KuronometerProgram
-import org.gradle.api.tasks.TaskAction
 import com.github.pedrovgs.kuronometer.implicits._
+import org.gradle.api.tasks.TaskAction
 
 object GetTodayBuildTimeSummaryTask {
   val name = "todayBuildTime"

@@ -18,25 +18,21 @@ object Kuronometer {
   def reportBuildFinished[F[_]](buildExecution: BuildExecution, config: Config)
                                (implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
     val filteredBuildExecution = filterBuildExecutionData(buildExecution, config)
-    reportBuildExecution(filteredBuildExecution, config).map { result: KuronometerResult[BuildExecution] =>
-      showReportResult(result, config)
-      result
-    }
+    reportBuildExecution(filteredBuildExecution, config)
+      .flatMap(result => showReportResult(result, config)
+      .map(_ => result))
   }
 
   def getTotalBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
-    R.getTotalBuildExecution.map { summary: KuronometerResult[SummaryBuildStagesExecution] =>
-      showBuildExecutionSummary(summary)
-      summary
-    }
+    R.getTotalBuildExecution
+      .flatMap(summary => showBuildExecutionSummary(summary)
+        .map(_ => summary))
   }
 
-  def getTodayBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
-    R.getTodayBuildExecution.map { summary: KuronometerResult[SummaryBuildStagesExecution] =>
-      showBuildExecutionSummary(summary)
-      summary
-    }
-  }
+  def getTodayBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] =
+    R.getTodayBuildExecution
+    .flatMap(summary => showBuildExecutionSummary(summary)
+      .map(_ => summary))
 
   private def reportBuildExecution[F[_]](buildExecution: BuildExecution, config: Config)
                                         (implicit R: ReporterOps[F]): Free[F, KuronometerResult[BuildExecution]] = {
@@ -55,18 +51,9 @@ object Kuronometer {
       V.showMessage("")
     } else {
       result match {
-        case Right(_) => for {
-          _ <- V.showSuccess(kuronometerHeader)
-          message <- V.showSuccess("Kuronometer: build execution reported!")
-        } yield message
-        case Left(ConnectionError) => for {
-          _ <- V.showError(kuronometerHeader)
-          message <- V.showError("Kuronometer: connection error reporting build execution to our servers :(")
-        } yield message
-        case _ => for {
-          _ <- V.showError(kuronometerHeader)
-          message <- V.showError("Kuronometer: unknown error reporting build execution to our servers :(")
-        } yield message
+        case Right(_) => V.showSuccess(kuronometerHeader) >> V.showSuccess("Kuronometer: build execution reported!")
+        case Left(ConnectionError) => V.showError(kuronometerHeader) >> V.showError("Kuronometer: connection error reporting build execution to our servers :(")
+        case _ => V.showError(kuronometerHeader) >> V.showError("Kuronometer: unknown error reporting build execution to our servers :(")
       }
     }
   }
