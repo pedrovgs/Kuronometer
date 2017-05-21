@@ -13,7 +13,7 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile project(':kuronometer-core')
-    compile 'org.scala-lang:scala-library:2.12.1'
+    compile 'org.scala-lang:scala-library:2.12.2'
     compile 'joda-time:joda-time:2.9.9'
     testCompile 'org.scalatest:scalatest_2.12:3.0.3'
     testRuntime 'org.pegdown:pegdown:1.4.2'

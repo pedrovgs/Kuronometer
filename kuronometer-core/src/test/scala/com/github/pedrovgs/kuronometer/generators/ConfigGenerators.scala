@@ -5,7 +5,7 @@ import org.scalacheck.{Arbitrary, Gen}
 
 object ConfigGenerators {
 
-  implicit lazy val arbConfig: Arbitrary[Config] = Arbitrary(config())
+  implicit val arbConfig: Arbitrary[Config] = Arbitrary(config())
 
   def config(reportDataRemotely: Gen[Boolean] = Arbitrary.arbitrary[Boolean]): Gen[Config] = for {
     platform <- Gen.oneOf(Platform.values.toSeq)

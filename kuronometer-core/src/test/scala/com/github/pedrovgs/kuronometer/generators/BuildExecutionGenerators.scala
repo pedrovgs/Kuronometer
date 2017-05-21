@@ -7,9 +7,9 @@ import scala.concurrent.duration._
 
 object BuildExecutionGenerators {
 
-  implicit lazy val arbBuildExecution: Arbitrary[BuildExecution] = Arbitrary(buildExecution())
-  implicit lazy val arbBuildStagesExecution: Arbitrary[BuildStagesExecution] = Arbitrary(buildStagesExecution())
-  implicit lazy val arbSummaryBuildExecution: Arbitrary[SummaryBuildStagesExecution] = Arbitrary(summaryBuildStagesExecution)
+  implicit val arbBuildExecution: Arbitrary[BuildExecution] = Arbitrary(buildExecution())
+  implicit val arbBuildStagesExecution: Arbitrary[BuildStagesExecution] = Arbitrary(buildStagesExecution())
+  implicit val arbSummaryBuildExecution: Arbitrary[SummaryBuildStagesExecution] = Arbitrary(summaryBuildStagesExecution)
 
   def buildExecutionTime: Gen[Long] = Gen.choose(0, 1000.days.toNanos)
 

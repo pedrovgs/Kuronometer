@@ -5,7 +5,7 @@ import org.scalacheck.{Arbitrary, Gen}
 
 object KuronometerErrorGenerators {
 
-  implicit lazy val arbKuronometerError: Arbitrary[KuronometerError] = Arbitrary(error)
+  implicit val arbKuronometerError: Arbitrary[KuronometerError] = Arbitrary(error)
 
   def error: Gen[KuronometerError] = Gen.oneOf(ConnectionError, UnknownError)
 
