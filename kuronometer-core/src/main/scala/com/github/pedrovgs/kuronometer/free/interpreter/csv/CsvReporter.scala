@@ -3,14 +3,19 @@ package com.github.pedrovgs.kuronometer.free.interpreter.csv
 import java.io.{File, FileReader, FileWriter}
 
 import com.github.pedrovgs.kuronometer.KuronometerResults.KuronometerResult
-import com.github.pedrovgs.kuronometer.free.domain._
+import com.github.pedrovgs.kuronometer.free.domain.{SummaryBuildStagesExecution, _}
 import org.supercsv.io.{CsvBeanReader, CsvBeanWriter, ICsvBeanWriter}
 import org.supercsv.prefs.CsvPreference
+import com.github.pedrovgs.kuronometer.KuronometerResults.UnknownError
+import scala.annotation.tailrec
+import scala.util.Try
 
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-
+object CsvReporter {
+  private val emptySummary = Right(SummaryBuildStagesExecution())
+}
 class CsvReporter {
+
+  import CsvReporter._
 
   def report(buildExecution: BuildExecution): KuronometerResult[BuildExecution] = {
     val stages = buildExecution.buildStagesExecution.stages
@@ -24,47 +29,47 @@ class CsvReporter {
 
   def getBuildExecutionStagesSinceTimestamp(filterTimestamp: Long): KuronometerResult[SummaryBuildStagesExecution] = {
     if (!existsReportFile || reportFileIsEmpty) {
-      Right(SummaryBuildStagesExecution())
+      emptySummary
     } else {
-
-      val csvBuildStages = mutable.ListBuffer[CsvBuildStageExecution]()
-
-      val csvFile = new File(CsvReporterConfig.executionTasksCsvFile)
-      val beanReader = new CsvBeanReader(new FileReader(csvFile), CsvPreference.STANDARD_PREFERENCE)
-      val headers = beanReader.getHeader(true)
-      try {
-        var csvBuildStage: CsvBuildStageExecution = beanReader.read(classOf[CsvBuildStageExecution], headers, CsvReporterConfig.processors: _*)
-        while (csvBuildStage != null) {
-          if (csvBuildStage.timestamp >= filterTimestamp) {
-            csvBuildStages.append(csvBuildStage)
-          }
-          csvBuildStage = beanReader.read(classOf[CsvBuildStageExecution], headers, CsvReporterConfig.processors: _*)
-        }
-      } finally if (beanReader != null) {
-        beanReader.close()
-      }
-      Right(mapCsvBuildStages(csvBuildStages))
+      var beanReader: CsvBeanReader = null
+      Try {
+        val csvFile = new File(CsvReporterConfig.executionTasksCsvFile)
+        beanReader = new CsvBeanReader(new FileReader(csvFile), CsvPreference.STANDARD_PREFERENCE)
+        val headers = beanReader.getHeader(true)
+        val csvBuildStages = innerReadBuildStages(filterTimestamp, Seq(), headers, beanReader)
+        Right(mapCsvBuildStages(csvBuildStages))
+      }.recover {
+        case _ =>
+          beanReader.close()
+          Left(UnknownError)
+      }.toOption.getOrElse(emptySummary)
     }
   }
 
-  def mapCsvBuildStages(csvBuildStages: ListBuffer[CsvBuildStageExecution]): SummaryBuildStagesExecution = {
+  def mapCsvBuildStages(csvBuildStages: Seq[CsvBuildStageExecution]): SummaryBuildStagesExecution = {
     val stages = csvBuildStages.map { stage =>
       SummaryBuildStageExecution(stage.name, stage.executionTime, stage.timestamp)
     }
     SummaryBuildStagesExecution(stages)
   }
 
-  def clear: Unit = {
-    if (existsReportFile) {
-      val csvFile = new File(CsvReporterConfig.executionTasksCsvFile)
-      csvFile.delete()
+  @tailrec
+  private def innerReadBuildStages(filterTimestamp: Long, stages: Seq[CsvBuildStageExecution], headers: Array[String], beanReader: CsvBeanReader): Seq[CsvBuildStageExecution] = {
+    val csvBuildStage = beanReader.read[CsvBuildStageExecution](classOf[CsvBuildStageExecution], headers, CsvReporterConfig.processors: _*)
+    if (csvBuildStage == null) {
+      beanReader.close()
+      stages
+    } else if (csvBuildStage.timestamp < filterTimestamp) {
+      innerReadBuildStages(filterTimestamp, stages, headers, beanReader)
+    } else {
+      innerReadBuildStages(filterTimestamp, stages :+ csvBuildStage, headers, beanReader)
     }
   }
 
   private def writeBuildStages(stages: Seq[BuildStage]) = {
-    val csvStages: Seq[CsvBuildStageExecution] = mapBuildStages(stages)
     var beanWriter: ICsvBeanWriter = null
-    try {
+    Try {
+      val csvStages: Seq[CsvBuildStageExecution] = mapBuildStages(stages)
       val reportsFolder = new File(CsvReporterConfig.reportsFolder)
       if (!reportsFolder.exists()) {
         reportsFolder.mkdirs()
@@ -75,13 +80,23 @@ class CsvReporter {
       if (!csvFileExists && csvStages.nonEmpty) {
         beanWriter.writeHeader(CsvReporterConfig.headers: _*)
       }
-      for (stage <- csvStages) {
-        beanWriter.write(stage, CsvReporterConfig.headers, CsvReporterConfig.processors)
-      }
-    } finally if (beanWriter != null) {
+      innerWriteBuildStages(csvStages, beanWriter)
+    }.recover {
+      case _ =>
+        beanWriter.close()
+    }
+  }
+
+  @tailrec
+  private def innerWriteBuildStages(stages: Seq[CsvBuildStageExecution], beanWriter: ICsvBeanWriter): Unit = {
+    if (stages.nonEmpty) {
+      beanWriter.write(stages.head, CsvReporterConfig.headers, CsvReporterConfig.processors)
+      innerWriteBuildStages(stages.tail, beanWriter)
+    } else {
       beanWriter.close()
     }
   }
+
 
   private def mapBuildStages(stages: Seq[BuildStage]) = {
     val csvStages = stages.map { stage =>
