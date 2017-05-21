@@ -38,7 +38,7 @@ class CsvReporterSpec extends FlatSpec with Matchers with PropertyChecks with Be
       reporter.report(buildExecution)
       val timestamp = 500
       val filteredBuildExecutions = reporter.getBuildExecutionStagesSinceTimestamp(timestamp)
-      val expectedBuildExecutions = buildExecution.buildStagesExecution.stages.filter(timestamp < _.execution.timestamp).map(reportedStage => SummaryBuildStageExecution(reportedStage.info.name, reportedStage.execution.executionTimeInNanoseconds, reportedStage.execution.timestamp))
+      val expectedBuildExecutions = buildExecution.buildStagesExecution.stages.filter(timestamp <= _.execution.timestamp).map(reportedStage => SummaryBuildStageExecution(reportedStage.info.name, reportedStage.execution.executionTimeInNanoseconds, reportedStage.execution.timestamp))
       filteredBuildExecutions shouldBe Right(SummaryBuildStagesExecution(expectedBuildExecutions))
     }
   }
