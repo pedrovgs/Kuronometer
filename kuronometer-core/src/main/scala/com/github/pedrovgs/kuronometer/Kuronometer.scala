@@ -23,11 +23,10 @@ object Kuronometer {
       .map(_ => result))
   }
 
-  def getTotalBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] = {
+  def getTotalBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] =
     R.getTotalBuildExecution
       .flatMap(summary => showBuildExecutionSummary(summary)
         .map(_ => summary))
-  }
 
   def getTodayBuildExecutionSummary[F[_]](implicit R: ReporterOps[F], V: ViewOps[F]): Free[F, KuronometerResult[SummaryBuildStagesExecution]] =
     R.getTodayBuildExecution
@@ -70,11 +69,10 @@ object Kuronometer {
     }
   }
 
-  private def filterBuildExecutionData(buildExecution: BuildExecution, config: Config): BuildExecution = {
+  private def filterBuildExecutionData(buildExecution: BuildExecution, config: Config): BuildExecution =
     if (config.reportProjectInfo) {
       buildExecution
     } else {
       buildExecution.copy(project = None)
     }
-  }
 }
