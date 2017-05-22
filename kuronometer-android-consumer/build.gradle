@@ -10,7 +10,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.1'
-    classpath group: 'com.github.pedrovgs', name: 'kuronometer', version: '0.0.1'
+    classpath "gradle.plugin.com.github.pedrovgs:kuronometer:0.0.1"
   }
 }
 

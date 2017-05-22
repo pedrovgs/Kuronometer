@@ -1,12 +1,22 @@
-group = 'com.github.pedrovgs'
-version = '0.0.1'
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
+    }
+}
 
 apply plugin: 'scala'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.maiflai.scalatest'
+apply plugin: "com.gradle.plugin-publish"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -27,6 +37,22 @@ install {
     repositories {
         mavenDeployer {
             repository(url: uri('../repo'))
+        }
+    }
+}
+
+version = '0.0.1'
+group = 'com.github.pedrovgs'
+pluginBundle {
+    website = 'https://github.com/pedrovgs/Kuronometer'
+    vcsUrl = 'https://github.com/pedrovgs/Kuronometer'
+    description = 'Let\'s measure how long developers around the world are compiling software.'
+    tags = ['build', 'monitoring']
+    plugins {
+        kuronometerPlugin {
+            id = 'com.github.pedrovgs.kuronometer'
+            displayName = 'Kuronometer'
+            version = '0.0.1'
         }
     }
 }

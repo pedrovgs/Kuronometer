@@ -31,16 +31,25 @@ Apply the plugin in your ``build.gradle``:
 
 buildscript {
   repositories {
-    mavenCentral()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
   }
-
   dependencies {
-    classpath "com.github.pedrovgs:kuronometer:0.0.1"
+    classpath "gradle.plugin.com.github.pedrovgs:kuronometer:0.0.1"
   }
 }
 
-apply plugin: "kuronometer"
+apply plugin: "com.github.pedrovgs.kuronometer"
 
+```
+
+or if you are using Gradle 2.1:
+
+```groovy
+plugins {
+  id "com.github.pedrovgs.kuronometer" version "0.0.1"
+}
 ```
 
 ## Configuration

@@ -13,7 +13,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.github.pedrovgs', name: 'kuronometer', version: '0.0.1'
+        classpath "gradle.plugin.com.github.pedrovgs:kuronometer:0.0.1"
     }
 }
 
@@ -25,7 +25,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-apply plugin: 'kuronometer'
+apply plugin: "com.github.pedrovgs.kuronometer"
 
 kuronometer {
     platformName = 'Java'
