@@ -1,9 +1,7 @@
 Kuronometer [![Build Status](https://travis-ci.org/pedrovgs/Kuronometer.svg?branch=master)](https://travis-ci.org/pedrovgs/Kuronometer)
 ===========
 
-Kuronometer is a [Gradle Plugin](https://docs.gradle.org/current/userguide/custom_plugins.html) developed using purely functional programming in [Scala](https://www.scala-lang.org/). Let's measure how long developers around the world are compiling software!
-
-Using this tool you can see how long you've been compiling your project during the last day or since the last clean execution using just one command:
+Kuronometer is a [Gradle Plugin](https://docs.gradle.org/current/userguide/custom_plugins.html) developed using purely functional programming in [Scala](https://www.scala-lang.org/). Using this Gradle plugin you can see how long you've been compiling your project during the last day or since the last clean execution using just one command:
 
 ```
 ./gradlew totalBuildTime
@@ -18,8 +16,6 @@ or
 ![screencast](./art/screencast.gif)
 
 Additionally, Kuronometer is going to report your build time to a remote service we will use to show how long developers around the world have been building software. Soon, we will publish a real time chronometer with the amount of time we've been building software [here](http://kuronometer.io). Your project data can be reported anonymously, so don't be afraid of using this project. Server side code can be found [here](https://github.com/delr3ves/KuronometerServer).
-
-If you are using Gradle, and at some point during your live as software engineer complained about build times, please install this plugin and help us to show how long we wait for the compiler.
 
 ![compilingTime](http://ardalis.com/wp-content/uploads/2016/02/compiling-300x262.png)
 
@@ -38,7 +34,7 @@ buildscript {
   }
 }
 
-apply plugin: "com.github.pedrovgs.kuronometer"
+apply plugin: 'com.github.pedrovgs.kuronometer'
 
 ```
 
@@ -48,7 +44,7 @@ You just need to indicate the project platform being used:
 
 ```groovy
 ...
-apply plugin: 'kuronometer'
+apply plugin: 'com.github.pedrovgs.kuronometer'
 
 kuronometer {
     platformName = 'Android' //This value can be Android, Java or Scala
@@ -60,16 +56,18 @@ If you need any advanced configuration:
 ```groovy
 
 kuronometer {
+    //Config used to indicate the platform name. By default the value configured is Java.
+    //This value can be 'Android', 'Java' or 'Scala' for now.
     platformName = 'Android'
-    //This value can be true or false. 
-    //It's used to remove the project sensitive information before to being reported. By default is true.
-    reportProjectInfo = true 
-    //This value can be true or false. 
-    //It's used to send or not the build report to the kuronometer server. By default is true.
+    //Config used to remove the project sensitive information before to being reported. By default is true.
+    //This value can be true or false.
+    reportProjectInfo = true
+    //Config used to send or not the build report to the kuronometer server. By default is true.
+    //This value can be true or false.
     reportDataRemotely = true
-    //This value can be true or false. 
-    //It's used to show a message after the build execution showing the report execution result. By default is false.
-    verbose = false
+    //Config used to show a message after the build execution showing the report execution result. By default is false.
+    //This value can be true or false.
+    verbose = true
 }
 ```
 
@@ -77,11 +75,11 @@ Inside the [kuronometer-consumer](./kuronometer-consumer/build.gradle) and the [
 
 ## Build and test this project
 
-To be able to build this project you can execute ``./gradlew build``.
+To build this and runt the unit and integration tests execute ``./gradlew build``.
 
 ## Run this project
 
-To be able to build this project you can execute these commands:
+To install this plugin in a local repository and test it from any consumer execute these commands:
 
 ```
 ./gradlew install
@@ -120,11 +118,11 @@ License
 
     Copyright 2017 Pedro Vicente Gómez Sánchez
 
-    Licensed under the GNU General Public License, Version 3 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.gnu.org/licenses/gpl-3.0.en.html
+       http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
