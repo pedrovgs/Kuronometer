@@ -1,11 +1,15 @@
 package com.github.pedrovgs.kuronometer.free.interpreter.formatter
 
+import java.text.{DecimalFormat, DecimalFormatSymbols}
+import java.util.Locale
+
 import com.github.pedrovgs.kuronometer.free.interpreter.formatter.DurationFormatter.NanosecondsFormat
 import com.github.pedrovgs.kuronometer.free.domain.{SummaryBuildStageExecution, SummaryBuildStagesExecution}
 
 object SummaryBuildStageExecutionFormatter {
 
   private val verticalSeparator = "|"
+  private val decimalFormat = new DecimalFormat("#.00", new DecimalFormatSymbols(Locale.US))
 
   def format(execution: SummaryBuildStagesExecution): String = {
     val header = "-" * 21 + "\n"
@@ -31,6 +35,7 @@ object SummaryBuildStageExecutionFormatter {
     val percentage = (buildStage.executionTimeInNanoseconds.toDouble / totalExecutionTime.toDouble) * 100
     val spaces = " " * ((100 - percentage) / 5).toInt
     val chars = "=" * (percentage / 5).toInt
-    verticalSeparator + spaces + chars + verticalSeparator + " " + "%.2f".format(percentage) + " % :" + buildStage.name + ": " + executionTime
+    val formattedPrecentage = decimalFormat.format(percentage)
+    verticalSeparator + spaces + chars + verticalSeparator + " " + formattedPrecentage + " % :" + buildStage.name + ": " + executionTime
   }
 }

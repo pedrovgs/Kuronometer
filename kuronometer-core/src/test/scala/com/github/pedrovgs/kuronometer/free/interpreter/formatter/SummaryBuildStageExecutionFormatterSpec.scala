@@ -29,6 +29,17 @@ class SummaryBuildStageExecutionFormatterSpec extends FlatSpec with Matchers wit
         "---------------------\n"
   }
 
+  it should "show the content of the summary build execution using two decimals when needed" in {
+    val stage1 = SummaryBuildStageExecution("compile", 2.seconds.toNanos, anyExecutionTimestamp)
+    val stage2 = SummaryBuildStageExecution("test", 1.seconds.toNanos, anyExecutionTimestamp)
+    val summary = SummaryBuildStagesExecution(Seq(stage1, stage2))
+    formatter.format(summary) shouldBe
+      "---------------------\n" +
+        "|      =============| 66.67 % :compile: 2 secs\n" +
+        "|             ======| 33.33 % :test: 1 sec" +
+        "\n---------------------\n"
+  }
+
   it should "combine stages with the same name" in {
     val stage1 = SummaryBuildStageExecution("compile", 2.seconds.toNanos, anyExecutionTimestamp)
     val stage2 = SummaryBuildStageExecution("test", 1.seconds.toNanos, anyExecutionTimestamp)
