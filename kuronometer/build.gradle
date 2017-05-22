@@ -1,18 +1,9 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
-    }
-}
+version = '0.0.1'
+group = 'com.github.pedrovgs'
 
 apply plugin: 'scala'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.maiflai.scalatest'
-apply plugin: "com.gradle.plugin-publish"
 
 repositories {
     mavenCentral()
@@ -32,6 +23,7 @@ dependencies {
 }
 
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 install {
     repositories {
@@ -41,18 +33,85 @@ install {
     }
 }
 
-version = '0.0.1'
-group = 'com.github.pedrovgs'
-pluginBundle {
-    website = 'https://github.com/pedrovgs/Kuronometer'
-    vcsUrl = 'https://github.com/pedrovgs/Kuronometer'
-    description = 'Let\'s measure how long developers around the world are compiling software.'
-    tags = ['build', 'monitoring']
-    plugins {
-        kuronometerPlugin {
-            id = 'com.github.pedrovgs.kuronometer'
-            displayName = 'Kuronometer'
-            version = '0.0.1'
+def isReleaseBuild() {
+    return VERSION_NAME.contains("SNAPSHOT") == false
+}
+
+def getRepositoryUsername() {
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+}
+
+signing {
+    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            // POM signature
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            // Target repository
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+            }
+
+            pom.groupId = GROUP
+            pom.artifactId = POM_ARTIFACT_ID
+            pom.version = VERSION_NAME
+
+            pom.project {
+                name POM_NAME
+                description POM_DESCRIPTION
+                packaging POM_PACKAGING
+                url POM_URL
+
+                scm {
+                    connection POM_SCM_CONNECTION
+                    developerConnection POM_SCM_DEV_CONNECTION
+                    url POM_SCM_URL
+                }
+
+                licenses {
+                    license {
+                        name POM_LICENCE_NAME
+                        url POM_LICENCE_URL
+                        distribution POM_LICENCE_DIST
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = POM_DEVELOPER_ID
+                        name = POM_DEVELOPER_NAME
+                    }
+                }
+            }
         }
     }
 }
+
+sourceSets {
+    test {
+        output.resourcesDir = "build/classes/test/resources"
+    }
+}
+
