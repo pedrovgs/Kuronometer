@@ -9,7 +9,7 @@ class KuronometerPluginSpec extends FlatSpec with Matchers {
 
   private val project: Project = {
     val project = ProjectBuilder.builder().build()
-    project.getPluginManager.apply("kuronometer")
+    project.getPluginManager.apply("com.github.pedrovgs.kuronometer")
     project
   }
 
