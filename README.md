@@ -34,7 +34,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.github.pedrovgs:kuronometer:0.0.2'
+    classpath 'com.github.pedrovgs:kuronometer:0.0.3'
   }
 }
 
