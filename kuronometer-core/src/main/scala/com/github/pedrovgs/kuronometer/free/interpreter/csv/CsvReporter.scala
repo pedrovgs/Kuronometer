@@ -77,7 +77,7 @@ class CsvReporter {
       val csvFileExists = existsReportFile
       val writer = new FileWriter(CsvReporterConfig.executionTasksCsvFile, csvFileExists)
       beanWriter = new CsvBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE)
-      if (!csvFileExists || csvStages.nonEmpty) {
+      if (!csvFileExists || reportFileIsEmpty) {
         beanWriter.writeHeader(CsvReporterConfig.headers: _*)
       }
       innerWriteBuildStages(csvStages, beanWriter)
