@@ -89,6 +89,20 @@ cd kuronometer-consumer
 ./gradlew build
 ```
 
+## Release a new version
+
+Before to release a new kuronometer version remember to update the config build files:
+
+```
+gradle.properties
+kuronometer-android-consumer/build.gradle
+kuronometer-consumer/build.gradle
+kuronometer-core/build.gradle
+kuronometer/build.gradle
+```
+
+Then execute ``./gradlew clean build uploadArchives``. Remember to configure your ``~/.gradle/gradle.properties`` file.
+
 Developed By
 ------------
 
