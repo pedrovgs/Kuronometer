@@ -1,0 +1,25 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+  repositories {
+    jcenter()
+    maven {
+      mavenCentral()
+      url uri('../repo')
+    }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:2.3.1'
+    classpath group: 'com.github.pedrovgs', name: 'kuronometer', version: '0.0.1'
+  }
+}
+
+allprojects {
+  repositories {
+    jcenter()
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}

@@ -1,15 +1,94 @@
-Kurono [![Build Status](https://travis-ci.org/pedrovgs/Kurono.svg?branch=master)](https://travis-ci.org/pedrovgs/Kurono)
-======
+Kuronometer [![Build Status](https://travis-ci.org/pedrovgs/Kuronometer.svg?branch=master)](https://travis-ci.org/pedrovgs/Kuronometer)
+===========
 
-An [IntelliJ](https://www.jetbrains.com/idea/) plugin used to measure how long developers are compiling software.
+Kuronometer is a [Gradle Plugin](https://docs.gradle.org/current/userguide/custom_plugins.html) developed using purely functional programming in [Scala](https://www.scala-lang.org/). Let's measure how long developers around the world are compiling software!
 
-IntelliJ Plugin built using the official [IntelliJ Platform SDK](http://www.jetbrains.org/intellij/sdk/docs/index.html) and the official [IntelliJ Gradle Plugin](https://github.com/JetBrains/gradle-intellij-plugin).
+Using this tool you can see how long you've been compiling your project during the last day or since the last clean execution using just one command:
 
-## Run and this project
+```
+./gradlew totalBuildTime
+```
 
-To be able to runt this project you can execute ``./gradlew runIdea`` or create a new ``Run/Debug Configuration`` as follows:
+or
 
-![runConfig.png](./art/runConfig.png)
+```
+./gradlew todayBuildTime
+```
+
+![screencast](./art/screencast.gif)
+
+Additionally, Kuronometer is going to report your build time to a remote service we will use to show how long developers around the world have been building software. Soon, we will publish a real time chronometer with the amount of time we've been building software [here](http://kuronometer.io). Your project data can be reported anonymously, so don't be afraid of using this project. Server side code can be found [here](https://github.com/delr3ves/KuronometerServer).
+
+If you are using Gradle, and at some point during your live as software engineer complained about build times, please install this plugin and help us to show how long we wait for the compiler.
+
+![compilingTime](http://ardalis.com/wp-content/uploads/2016/02/compiling-300x262.png)
+
+## Installation
+
+Apply the plugin in your ``build.gradle``:
+
+```groovy
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "com.github.pedrovgs:kuronometer:0.0.1"
+  }
+}
+
+apply plugin: "kuronometer"
+
+```
+
+## Configuration
+
+You just need to indicate the project platform being used:
+
+```groovy
+...
+apply plugin: 'kuronometer'
+
+kuronometer {
+    platformName = 'Android' //This value can be Android, Java or Scala
+}
+```
+
+If you need any advanced configuration:
+
+```groovy
+
+kuronometer {
+    platformName = 'Android'
+    //This value can be true or false. 
+    //It's used to remove the project sensitive information before to being reported. By default is true.
+    reportProjectInfo = true 
+    //This value can be true or false. 
+    //It's used to send or not the build report to the kuronometer server. By default is true.
+    reportDataRemotely = true
+    //This value can be true or false. 
+    //It's used to show a message after the build execution showing the report execution result. By default is false.
+    verbose = false
+}
+```
+
+Inside the [kuronometer-consumer](./kuronometer-consumer/build.gradle) and the [kuronometer-android-consumer](./kuronometer-android-consumer/app/build.gradle) folders you can find two configuration examples.
+
+## Build and test this project
+
+To be able to build this project you can execute ``./gradlew build``.
+
+## Run this project
+
+To be able to build this project you can execute these commands:
+
+```
+./gradlew install
+cd kuronometer-consumer
+./gradlew build
+```
 
 Developed By
 ------------
