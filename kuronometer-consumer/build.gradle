@@ -32,7 +32,7 @@ kuronometer {
     //Config used to indicate the platform name. By default the value configured is Java.
     //This value can be 'Android', 'Java' or 'Scala' for now.
     platformName = 'Java'
-    //Config used to remove the project sensitive information before to being reported. By default is true.
+    //Config used to attach or not sensitive information before to being reported. By default is true.
     //This value can be true or false.
     reportProjectInfo = true
     //Config used to send or not the build report to the kuronometer server. By default is true.
