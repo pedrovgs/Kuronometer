@@ -39,7 +39,6 @@ class CsvReporter {
 
   def getBuildExecutionStagesSinceTimestamp(filterTimestamp: Long)
     : KuronometerResult[SummaryBuildStagesExecution] = {
-    //TODO: Use ICsvDozerBeanReader for reading and writing.
     if (!existsReportFile || reportFileIsEmpty) {
       emptySummary
     } else {
