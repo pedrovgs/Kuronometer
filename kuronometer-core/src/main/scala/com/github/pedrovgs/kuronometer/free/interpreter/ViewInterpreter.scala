@@ -24,7 +24,6 @@ class ViewInterpreter extends (ViewOp ~> Id) {
     message
   }
 
-
   private def showError(message: Message): Message = {
     show(Console.RED + message + Console.RESET)
     message

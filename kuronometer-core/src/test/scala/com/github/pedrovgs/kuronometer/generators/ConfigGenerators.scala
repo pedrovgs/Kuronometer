@@ -7,11 +7,13 @@ object ConfigGenerators {
 
   implicit val arbConfig: Arbitrary[Config] = Arbitrary(config())
 
-  def config(reportDataRemotely: Gen[Boolean] = Arbitrary.arbitrary[Boolean]): Gen[Config] = for {
-    platform <- Gen.oneOf(Platform.values.toSeq)
-    reportProjectInfo <- Arbitrary.arbitrary[Boolean]
-    reportDataRemotely <- reportDataRemotely
-    verbose <- Arbitrary.arbitrary[Boolean]
-  } yield Config(platform, reportProjectInfo, reportDataRemotely, verbose)
+  def config(reportDataRemotely: Gen[Boolean] = Arbitrary.arbitrary[Boolean])
+    : Gen[Config] =
+    for {
+      platform <- Gen.oneOf(Platform.values.toSeq)
+      reportProjectInfo <- Arbitrary.arbitrary[Boolean]
+      reportDataRemotely <- reportDataRemotely
+      verbose <- Arbitrary.arbitrary[Boolean]
+    } yield Config(platform, reportProjectInfo, reportDataRemotely, verbose)
 
 }

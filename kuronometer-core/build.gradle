@@ -4,6 +4,7 @@ version = '0.0.5-SNAPSHOT'
 apply plugin: 'scala'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.maiflai.scalatest'
+apply plugin: 'scalafmt'
 
 repositories {
     mavenCentral()

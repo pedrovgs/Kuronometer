@@ -12,7 +12,7 @@ android:
     - extra-android-m2repository
 
 script:
-  - ./gradlew build install
+  - ./gradlew checkScalafmtAll build install
   - cd kuronometer-consumer
   - ./gradlew build test
   - ./gradlew totalBuildTime
