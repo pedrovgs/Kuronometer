@@ -6,6 +6,6 @@ object KuronometerResults {
 
   sealed trait KuronometerError
   case object ConnectionError extends KuronometerError
-  case object UnknownError extends KuronometerError
+  case class UnknownError(t: Option[Throwable] = None) extends KuronometerError
 
 }

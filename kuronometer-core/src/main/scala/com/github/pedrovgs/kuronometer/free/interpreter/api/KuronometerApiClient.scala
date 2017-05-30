@@ -36,7 +36,8 @@ class KuronometerApiClient {
         .postData(body)
         .asString)
       .map(response =>
-        if (response.isSuccess) Right(buildExecution) else Left(UnknownError))
+        if (response.isSuccess) Right(buildExecution)
+        else Left(UnknownError()))
       .toOption
       .getOrElse(Left(ConnectionError))
   }

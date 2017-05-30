@@ -42,7 +42,7 @@ class KuronometerApiClientSpec
 
     val result = report()
 
-    result shouldBe Left(UnknownError)
+    result shouldBe Left(UnknownError())
   }
 
   it should "send the build execution as part of the report request serialized into json" in {

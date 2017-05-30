@@ -12,6 +12,6 @@ object KuronometerErrorGenerators {
   implicit val arbKuronometerError: Arbitrary[KuronometerError] = Arbitrary(
     error)
 
-  def error: Gen[KuronometerError] = Gen.oneOf(ConnectionError, UnknownError)
+  def error: Gen[KuronometerError] = Gen.oneOf(ConnectionError, UnknownError())
 
 }

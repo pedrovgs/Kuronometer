@@ -5,7 +5,8 @@ import cats.implicits._
 import cats.free.Free
 import com.github.pedrovgs.kuronometer.KuronometerResults.{
   ConnectionError,
-  KuronometerResult
+  KuronometerResult,
+  UnknownError
 }
 import com.github.pedrovgs.kuronometer.free.algebra.{ReporterOps, ViewOps}
 import com.github.pedrovgs.kuronometer.free.domain.View.Message
@@ -93,6 +94,12 @@ object Kuronometer {
           _ <- V.showMessage(
             SummaryBuildStageExecutionFormatter.format(summary))
         } yield message
+      case Left(UnknownError(Some(t))) =>
+        V.showError(
+            "Kuronometer: Exception catch while gathering data related to your builds execution: " + t.getLocalizedMessage + ".\n")
+          .flatMap(_ =>
+            V.showError(
+              "Try cleaning your project executing \"./gradlew clean\". If this doesn't fix your problem open an issue in the project GitHub repository https://github.com/pedrovgs/kuronometer"))
       case Left(_) =>
         V.showError(
           "Kuronometer: Error gathering data related to your builds execution.")

@@ -2,20 +2,25 @@ package com.github.pedrovgs.kuronometer.free.interpreter.csv
 
 import java.io.{File, FileReader, FileWriter}
 
-import com.github.pedrovgs.kuronometer.KuronometerResults.KuronometerResult
+import com.github.pedrovgs.kuronometer.KuronometerResults.{
+  KuronometerResult,
+  UnknownError
+}
 import com.github.pedrovgs.kuronometer.free.domain.{
   SummaryBuildStagesExecution,
   _
 }
 import org.supercsv.io.{CsvBeanReader, CsvBeanWriter, ICsvBeanWriter}
 import org.supercsv.prefs.CsvPreference
-import com.github.pedrovgs.kuronometer.KuronometerResults.UnknownError
+
 import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 object CsvReporter {
   private val emptySummary = Right(SummaryBuildStagesExecution())
 }
+
 class CsvReporter {
 
   import CsvReporter._
@@ -44,12 +49,15 @@ class CsvReporter {
                                        CsvPreference.STANDARD_PREFERENCE)
         val headers = beanReader.getHeader(true)
         val csvBuildStages =
-          innerReadBuildStages(filterTimestamp, Seq(), headers, beanReader)
+          innerReadBuildStages(filterTimestamp,
+                               ListBuffer(),
+                               headers,
+                               beanReader)
         Right(mapCsvBuildStages(csvBuildStages))
       }.recover {
-          case _ =>
+          case throwable =>
             beanReader.close()
-            Left(UnknownError)
+            Left(UnknownError(Some(throwable)))
         }
         .toOption
         .getOrElse(emptySummary)
@@ -58,18 +66,18 @@ class CsvReporter {
 
   def mapCsvBuildStages(csvBuildStages: Seq[CsvBuildStageExecution])
     : SummaryBuildStagesExecution = {
-    val stages = csvBuildStages.map { stage =>
+    val stages = csvBuildStages.par.map { stage =>
       SummaryBuildStageExecution(stage.name,
                                  stage.executionTime,
                                  stage.timestamp)
     }
-    SummaryBuildStagesExecution(stages)
+    SummaryBuildStagesExecution(stages.toList)
   }
 
   @tailrec
   private def innerReadBuildStages(
       filterTimestamp: Long,
-      stages: Seq[CsvBuildStageExecution],
+      stages: ListBuffer[CsvBuildStageExecution],
       headers: Array[String],
       beanReader: CsvBeanReader): Seq[CsvBuildStageExecution] = {
     val csvBuildStage = beanReader.read[CsvBuildStageExecution](
@@ -82,10 +90,8 @@ class CsvReporter {
     } else if (csvBuildStage.timestamp < filterTimestamp) {
       innerReadBuildStages(filterTimestamp, stages, headers, beanReader)
     } else {
-      innerReadBuildStages(filterTimestamp,
-                           stages :+ csvBuildStage,
-                           headers,
-                           beanReader)
+      stages.append(csvBuildStage)
+      innerReadBuildStages(filterTimestamp, stages, headers, beanReader)
     }
   }
 
