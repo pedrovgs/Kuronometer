@@ -1,6 +1,5 @@
 package com.github.pedrovgs.kuronometer.free.interpreter
 
-
 import cats.{Id, ~>}
 import com.github.pedrovgs.kuronometer.free.algebra._
 

@@ -6,7 +6,10 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.duration._
 
-class DurationFormatterSpec extends FlatSpec with Matchers with PropertyChecks {
+class DurationFormatterSpec
+    extends FlatSpec
+    with Matchers
+    with PropertyChecks {
 
   private val formatter = DurationFormatter.NanosecondsFormat
 

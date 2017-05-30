@@ -11,10 +11,13 @@ object GetTotalBuildTimeSummaryTask {
 
 class GetTotalBuildTimeSummaryTask() extends KuronometerTask {
 
-  setDescription("Displays the project total build time and a report of the different tasks execution times.")
+  setDescription(
+    "Displays the project total build time and a report of the different tasks execution times.")
 
   @TaskAction
   def totalBuildTime(): Unit = {
-    Kuronometer.getTotalBuildExecutionSummary[KuronometerProgram].foldMap(interpreters.kuronometerInterpreter)
+    Kuronometer
+      .getTotalBuildExecutionSummary[KuronometerProgram]
+      .foldMap(interpreters.kuronometerInterpreter)
   }
 }

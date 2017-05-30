@@ -13,7 +13,9 @@ class BuildExecutionSpec extends FlatSpec with Matchers with PropertyChecks {
 
   it should "sum the build stages execution to return the execution time" in {
     forAll { (stages: BuildStagesExecution) =>
-      stages.executionTimeInNanoseconds shouldBe stages.stages.map(_.execution.executionTimeInNanoseconds).sum
+      stages.executionTimeInNanoseconds shouldBe stages.stages
+        .map(_.execution.executionTimeInNanoseconds)
+        .sum
     }
   }
 

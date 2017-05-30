@@ -1,6 +1,9 @@
 package com.github.pedrovgs.kuronometer
 
-import com.github.pedrovgs.kuronometer.tasks.{GetTodayBuildTimeSummaryTask, GetTotalBuildTimeSummaryTask}
+import com.github.pedrovgs.kuronometer.tasks.{
+  GetTodayBuildTimeSummaryTask,
+  GetTotalBuildTimeSummaryTask
+}
 import org.gradle.api.{Plugin, Project}
 import com.github.pedrovgs.kuronometer.implicits._
 
@@ -13,8 +16,10 @@ class KuronometerPlugin extends Plugin[Project] {
   }
 
   private def addTasks(project: Project) = {
-    project.getTasks.create(GetTotalBuildTimeSummaryTask.name, classOf[GetTotalBuildTimeSummaryTask])
-    project.getTasks.create(GetTodayBuildTimeSummaryTask.name, classOf[GetTodayBuildTimeSummaryTask])
+    project.getTasks.create(GetTotalBuildTimeSummaryTask.name,
+                            classOf[GetTotalBuildTimeSummaryTask])
+    project.getTasks.create(GetTodayBuildTimeSummaryTask.name,
+                            classOf[GetTodayBuildTimeSummaryTask])
   }
 
   private def addPluginExtension(project: Project) = {
@@ -27,6 +32,5 @@ class KuronometerPlugin extends Plugin[Project] {
     project.getGradle.addBuildListener(buildListener)
     project.getGradle.addListener(buildListener)
   }
-
 
 }
