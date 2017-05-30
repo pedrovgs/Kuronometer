@@ -5,12 +5,10 @@ import java.io.File
 import org.supercsv.cellprocessor.ParseLong
 import org.supercsv.cellprocessor.ift.CellProcessor
 
-private [csv] object CsvReporterConfig {
+private[csv] object CsvReporterConfig {
 
-  val headers: Array[String] = Array[String](
-    "name",
-    "executionTime",
-    "timestamp")
+  val headers: Array[String] =
+    Array[String]("name", "executionTime", "timestamp")
 
   val processors: Array[CellProcessor] = Array[CellProcessor](
     new org.supercsv.cellprocessor.constraint.NotNull(),
@@ -18,5 +16,6 @@ private [csv] object CsvReporterConfig {
     new ParseLong())
 
   val reportsFolder: String = "build/reports/kuronometer"
-  val executionTasksCsvFile: String = new File(reportsFolder).getAbsolutePath + "/tasksExecutionTimes.csv"
+  val executionTasksCsvFile
+    : String = new File(reportsFolder).getAbsolutePath + "/tasksExecutionTimes.csv"
 }

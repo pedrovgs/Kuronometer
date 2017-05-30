@@ -23,7 +23,6 @@ class ViewOps[F[_]](implicit I: Inject[ViewOp, F]) {
 }
 
 object ViewOps {
-  implicit def V[F[_]](implicit I: Inject[ViewOp, F]): ViewOps[F] = new ViewOps[F]
+  implicit def V[F[_]](implicit I: Inject[ViewOp, F]): ViewOps[F] =
+    new ViewOps[F]
 }
-
-

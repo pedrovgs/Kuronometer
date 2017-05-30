@@ -5,8 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
-trait StubbingHttp extends BeforeAndAfterEach {
-  this: Suite =>
+trait StubbingHttp extends BeforeAndAfterEach { this: Suite =>
 
   val port = 8080
   val host = "localhost"
