@@ -34,6 +34,7 @@ class CsvReporter {
 
   def getBuildExecutionStagesSinceTimestamp(filterTimestamp: Long)
     : KuronometerResult[SummaryBuildStagesExecution] = {
+    //TODO: Use ICsvDozerBeanReader for reading and writing.
     if (!existsReportFile || reportFileIsEmpty) {
       emptySummary
     } else {
@@ -47,9 +48,9 @@ class CsvReporter {
           innerReadBuildStages(filterTimestamp, Seq(), headers, beanReader)
         Right(mapCsvBuildStages(csvBuildStages))
       }.recover {
-          case _ =>
+          case throwable =>
             beanReader.close()
-            Left(UnknownError)
+            Left(UnknownError(Some(throwable)))
         }
         .toOption
         .getOrElse(emptySummary)
@@ -58,12 +59,12 @@ class CsvReporter {
 
   def mapCsvBuildStages(csvBuildStages: Seq[CsvBuildStageExecution])
     : SummaryBuildStagesExecution = {
-    val stages = csvBuildStages.map { stage =>
+    val stages = csvBuildStages.par.map { stage =>
       SummaryBuildStageExecution(stage.name,
                                  stage.executionTime,
                                  stage.timestamp)
     }
-    SummaryBuildStagesExecution(stages)
+    SummaryBuildStagesExecution(stages.toList)
   }
 
   @tailrec
@@ -82,6 +83,7 @@ class CsvReporter {
     } else if (csvBuildStage.timestamp < filterTimestamp) {
       innerReadBuildStages(filterTimestamp, stages, headers, beanReader)
     } else {
+      //TODO: stages :+ csvBuildStage this could short circuit the recursion.
       innerReadBuildStages(filterTimestamp,
                            stages :+ csvBuildStage,
                            headers,
