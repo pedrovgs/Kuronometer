@@ -3,6 +3,14 @@ Kuronometer [![Build Status](https://travis-ci.org/pedrovgs/Kuronometer.svg?bran
 
 Kuronometer is a [Gradle Plugin](https://docs.gradle.org/current/userguide/custom_plugins.html) developed using purely functional programming in [Scala](https://www.scala-lang.org/). Using this Gradle plugin you can see how long you've been compiling your project during the last day or since the last clean execution using just one command:
 
+**After configuring this plugin execute any build from Android Studio or your terminal:**
+
+```
+./gradlew assemble
+```
+
+Then check the build time gathered using the following commands:
+
 ```
 ./gradlew totalBuildTime
 ```
