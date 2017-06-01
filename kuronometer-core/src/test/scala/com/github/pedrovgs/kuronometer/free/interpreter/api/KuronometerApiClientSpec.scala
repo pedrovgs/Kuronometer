@@ -8,6 +8,7 @@ import com.github.pedrovgs.kuronometer.free.domain.BuildExecution
 import com.github.pedrovgs.kuronometer.mothers.BuildExecutionMother
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.Future
@@ -18,6 +19,9 @@ class KuronometerApiClientSpec
     with StubbingHttp
     with Resources
     with ScalaFutures {
+
+  implicit val defaultPatience =
+    PatienceConfig(timeout = Span(1, Seconds), interval = Span(100, Millis))
 
   private val reportBuildExecutionPath = "/buildExecution"
   private implicit def apiClientConfig =
