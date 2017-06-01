@@ -16,7 +16,8 @@ class KuronometerApiClientSpec
     extends FlatSpec
     with Matchers
     with StubbingHttp
-    with Resources {
+    with Resources
+    with ScalaFutures {
 
   private val reportBuildExecutionPath = "/buildExecution"
   private implicit def apiClientConfig =
@@ -26,7 +27,7 @@ class KuronometerApiClientSpec
   "KuronometerApiClient" should "report a build execution to the correct path using a post request" in {
     givenTheBuildExecutionIsReportedProperly()
 
-    ScalaFutures.whenReady(report()) { _ =>
+    whenReady(report()) { _ =>
       verify(postRequestedFor(urlEqualTo(reportBuildExecutionPath)))
     }
   }
@@ -35,7 +36,7 @@ class KuronometerApiClientSpec
     givenTheBuildExecutionIsReportedProperly()
 
     val buildExecution = BuildExecutionMother.anyBuildExecution
-    ScalaFutures.whenReady(report(buildExecution)) { result =>
+    whenReady(report(buildExecution)) { result =>
       result shouldBe Right(buildExecution)
     }
   }
@@ -43,7 +44,7 @@ class KuronometerApiClientSpec
   it should "return an UnknownError if something goes wrong in server side" in {
     givenTheBuildExecutionReportFails()
 
-    ScalaFutures.whenReady(report()) { result =>
+    whenReady(report()) { result =>
       result shouldBe Left(UnknownError())
     }
   }
@@ -51,7 +52,7 @@ class KuronometerApiClientSpec
   it should "send the build execution as part of the report request serialized into json" in {
     givenTheBuildExecutionIsReportedProperly()
 
-    ScalaFutures.whenReady(report()) { _ =>
+    whenReady(report()) { _ =>
       verify(
         postRequestedFor(urlEqualTo(reportBuildExecutionPath))
           .withRequestBody(
@@ -62,8 +63,7 @@ class KuronometerApiClientSpec
   it should "send the build execution anonymously as part of the report request serialized into json" in {
     givenTheBuildExecutionIsReportedProperly()
 
-    ScalaFutures.whenReady(
-      report(BuildExecutionMother.anonymousBuildExecution)) { _ =>
+    whenReady(report(BuildExecutionMother.anonymousBuildExecution)) { _ =>
       verify(
         postRequestedFor(urlEqualTo(reportBuildExecutionPath))
           .withRequestBody(equalToJson(
@@ -74,7 +74,7 @@ class KuronometerApiClientSpec
   it should "send the accept application json header as part of the request" in {
     givenTheBuildExecutionIsReportedProperly()
 
-    ScalaFutures.whenReady(report()) { _ =>
+    whenReady(report()) { _ =>
       verify(
         postRequestedFor(urlEqualTo(reportBuildExecutionPath))
           .withHeader("Content-Type",
