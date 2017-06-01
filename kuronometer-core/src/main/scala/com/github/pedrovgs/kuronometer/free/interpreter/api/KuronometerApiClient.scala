@@ -43,10 +43,11 @@ class KuronometerApiClient {
   }
 
   private def composeUrl(path: String)(
-      implicit apiClientConfig: KuronometerApiClientConfig): String =  apiClientConfig.port match {
-    case Some(port) => apiClientConfig.scheme + "://" + apiClientConfig.host + ":" + port + path
-    case _ => apiClientConfig.scheme + "://" + apiClientConfig.host + path
-  }
-
+      implicit apiClientConfig: KuronometerApiClientConfig): String =
+    apiClientConfig.port match {
+      case Some(port) =>
+        apiClientConfig.scheme + "://" + apiClientConfig.host + ":" + port + path
+      case _ => apiClientConfig.scheme + "://" + apiClientConfig.host + path
+    }
 
 }
