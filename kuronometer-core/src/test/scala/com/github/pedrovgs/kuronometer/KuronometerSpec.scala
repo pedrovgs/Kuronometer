@@ -17,8 +17,6 @@ import org.scalacheck.Gen
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import org.scalatest.prop.PropertyChecks
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class KuronometerSpec
     extends FlatSpec
@@ -40,7 +38,7 @@ class KuronometerSpec
       (apiClient
         .report(_: BuildExecution)(_: KuronometerApiClientConfig))
         .expects(build, *)
-        .returning(Future { Left(error) })
+        .returning(Left(error))
       (csvReporter.report _).expects(build).returning(Right(build))
 
       val reportedBuild = Kuronometer
@@ -56,7 +54,7 @@ class KuronometerSpec
       (apiClient
         .report(_: BuildExecution)(_: KuronometerApiClientConfig))
         .expects(build, *)
-        .returning(Future { Right(build) })
+        .returning(Right(build))
       (csvReporter.report _).expects(build).returning(Left(error))
 
       val reportedBuild = Kuronometer
@@ -73,7 +71,7 @@ class KuronometerSpec
         (apiClient
           .report(_: BuildExecution)(_: KuronometerApiClientConfig))
           .expects(*, *)
-          .returning(Future { Right(build) })
+          .returning(Right(build))
         (csvReporter.report _).expects(*).returning(Right(build))
 
         val reportedBuild = Kuronometer
@@ -91,7 +89,7 @@ class KuronometerSpec
           .report(_: BuildExecution)(_: KuronometerApiClientConfig))
           .expects(*, *)
           .never()
-          .returning(Future { Right(build) })
+          .returning(Right(build))
         (csvReporter.report _).expects(*).returning(Right(build))
 
         val reportedBuild = Kuronometer
@@ -108,7 +106,7 @@ class KuronometerSpec
       (apiClient
         .report(_: BuildExecution)(_: KuronometerApiClientConfig))
         .expects(anonymousBuild, *)
-        .returning(Future { Right(anonymousBuild) })
+        .returning(Right(anonymousBuild))
       (csvReporter.report _)
         .expects(anonymousBuild)
         .returning(Right(anonymousBuild))

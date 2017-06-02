@@ -39,5 +39,5 @@ kuronometer {
     reportDataRemotely = true
     //Config used to show a message after the build execution showing the report execution result. By default is false.
     //This value can be true or false.
-    verbose = false
+    verbose = true
 }
