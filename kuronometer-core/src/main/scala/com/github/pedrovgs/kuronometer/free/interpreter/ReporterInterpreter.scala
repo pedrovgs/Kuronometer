@@ -20,6 +20,7 @@ class ReporterInterpreter(implicit csvReporter: CsvReporter,
   override def apply[A](fa: ReporterOp[A]): Id[A] = fa match {
     case ReportBuildExecution(buildExecution, RemoteReport) =>
       apiClient.report(buildExecution)
+      Right(buildExecution)
     case ReportBuildExecution(buildExecution, LocalReport) =>
       csvReporter.report(buildExecution)
     case GetTotalBuildExecution() => csvReporter.getTotalBuildExecutionStages
