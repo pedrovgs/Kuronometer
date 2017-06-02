@@ -32,7 +32,7 @@ class KuronometerSpec
   "Kuronometer" should "point to production" in {
     apiConfig.scheme shouldBe "https"
     apiConfig.host shouldBe "kuronometer.io"
-    apiConfig.port shouldBe 80
+    apiConfig.port shouldBe None
   }
 
   it should "returns the build report as a success even when the remote reporter fails due to any error" in {

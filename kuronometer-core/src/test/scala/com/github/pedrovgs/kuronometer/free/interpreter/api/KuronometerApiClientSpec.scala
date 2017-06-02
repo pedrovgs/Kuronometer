@@ -25,7 +25,7 @@ class KuronometerApiClientSpec
 
   private val reportBuildExecutionPath = "/buildExecution"
   private implicit def apiClientConfig =
-    KuronometerApiClientConfig(scheme, host, port)
+    KuronometerApiClientConfig(scheme, host, Some(port))
   private val apiClient = new KuronometerApiClient()
 
   "KuronometerApiClient" should "report a build execution to the correct path using a post request" in {
