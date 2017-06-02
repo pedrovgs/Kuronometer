@@ -64,8 +64,7 @@ If you need any advanced configuration:
 ```groovy
 
 kuronometer {
-    //Config used to indicate the platform name. By default the value configured is Java.
-    //This value can be 'Android', 'Java' or 'Scala' for now.
+    //Config used to indicate the platform or language name. By default the value configured is Java.
     platformName = 'Android'
     //Config used to attach or not sensitive information before to being reported. By default is true.
     //This value can be true or false.

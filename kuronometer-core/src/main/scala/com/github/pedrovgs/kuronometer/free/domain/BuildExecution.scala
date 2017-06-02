@@ -5,7 +5,7 @@ object BuildTool extends Enumeration {
 }
 
 object Platform extends Enumeration {
-  val Java, Android, Scala, Unknown = Value
+  val Java, Android, Scala, Groovy, Kotlin, Clojure, Unknown = Value
 
   def withNameOpt(s: String): Option[Value] = values.find(_.toString == s)
 }
