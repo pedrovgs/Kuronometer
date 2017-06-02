@@ -38,7 +38,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.github.pedrovgs:kuronometer:0.1.0'
+    classpath 'com.github.pedrovgs:kuronometer:0.1.1'
   }
 }
 
@@ -104,6 +104,7 @@ kuronometer-android-consumer/build.gradle
 kuronometer-consumer/build.gradle
 kuronometer-core/build.gradle
 kuronometer/build.gradle
+README.md
 ```
 
 Then execute ``./gradlew clean build uploadArchives``. Remember to configure your ``~/.gradle/gradle.properties`` file.

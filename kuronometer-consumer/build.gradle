@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.pedrovgs:kuronometer:0.1.1-SNAPSHOT'
+        classpath 'com.github.pedrovgs:kuronometer:0.1.1'
     }
 }
 

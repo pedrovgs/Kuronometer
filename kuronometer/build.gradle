@@ -1,4 +1,4 @@
-version = '0.1.1-SNAPSHOT'
+version = '0.1.1'
 group = 'com.github.pedrovgs'
 
 apply plugin: 'scala'
