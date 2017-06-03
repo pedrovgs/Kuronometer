@@ -110,7 +110,7 @@ README.md
 Then execute ``./gradlew clean build uploadArchives``. Remember to configure your ``~/.gradle/gradle.properties`` file.
 
 ## Related projects:
- * [Gradle plugin](https://github.com/pedrovgs/Kuronometer).
+ * [Server](https://github.com/delr3ves/KuronometerServer).
  * [Elasticbeanstalk configuration](https://github.com/davideme/kuronometer-elasticbeanstalk).
  * [Terraform configuration](https://github.com/davideme/KuronometerTerraform).
 
