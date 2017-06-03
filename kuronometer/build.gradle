@@ -5,6 +5,7 @@ apply plugin: 'scala'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.maiflai.scalatest'
 apply plugin: 'scalafmt'
+apply plugin: 'com.github.pedrovgs.kuronometer'
 
 repositories {
     mavenCentral()
@@ -114,5 +115,9 @@ sourceSets {
     test {
         output.resourcesDir = "build/classes/test/resources"
     }
+}
+
+kuronometer {
+    verbose = true
 }
 

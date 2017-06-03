@@ -7,6 +7,7 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.com.github.maiflai:gradle-scalatest:0.15"
-        classpath 'cz.alenkacz:gradle-scalafmt:1.3.5'
+        classpath "cz.alenkacz:gradle-scalafmt:1.3.5"
+        classpath "com.github.pedrovgs:kuronometer:0.1.1"
     }
 }
