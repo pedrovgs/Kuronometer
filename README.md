@@ -1,4 +1,4 @@
-Kuronometer [![Build Status](https://travis-ci.org/pedrovgs/Kuronometer.svg?branch=master)](https://travis-ci.org/pedrovgs/Kuronometer)
+Kuronometer
 ===========
 
 Kuronometer is a [Gradle Plugin](https://docs.gradle.org/current/userguide/custom_plugins.html) developed using purely functional programming in [Scala](https://www.scala-lang.org/). Using this Gradle plugin you can see how long you've been compiling your project during the last day or since the last clean execution using just one command:
